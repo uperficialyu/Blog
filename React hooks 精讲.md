@@ -169,6 +169,85 @@ useState原理就这么简单吗？我们已经实现的自己的useState了吗�
 	
 	export default App;
 
+#### useState调用顺序
+若第一次渲染时n是第一个，m是第二个，k是第三个  
+则第二次渲染时必须保证顺序完全一致  
+所以React不允许出现如下代码  
 
+#### useState总结
+1. 每个函数组件对应一个React节点
+2. 每个节点保存着state和index
+3. useState会读取state[index]
+4. index由useState出现的顺序决定
+5. setState会修改state，
+6. 并触发更新
+7. 目前的内容其实就这么简单
 
+## useRef
+
+#### n的分身
+
+	import React, { useState } from 'react';
+	
+	function App() {
+	  const [n, setN] = useState(0);
+	  const log = () => setTimeout(() => {
+	    console.log(`log: ${ n }`);
+	  },3000)
+	  return (
+	    <div>
+	      <p>{n}</p>
+	      <p>
+	        <button onClick={() => setN(n + 1)}>+1</button>
+	        <button onClick={log}>log</button>
+	      </p>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+#### 两种操作
+点击+1在点击log 无bug  
+点击log再点击+1 有bug  
+问题：为什么log出了旧数据?  
+
+如果我需要一个贯穿始终的状态应该怎么做？
+
+1. 全局变量  
+window.xxx
+2. useRef  
+useRef不仅可以在标签上使用，也可以用于各种数据
+3. useContest  
+useContext不仅贯穿始终，还能贯穿不同组件
+
+使用useRef
+
+	import React, { useState, useRef } from 'react';
+	
+	function App() {
+	  const nRef = useRef(0); // {current: 0}
+	  const log = () => setTimeout(() => {
+	    console.log(`${nRef.current}`);
+	  }, 3000)
+	  const update = useState(null)[1];
+	
+	  return (
+	    <div>
+	      <p> {nRef.current}这里并不能实时更新</p>
+	      <p>
+	        <button
+	          onClick={() => {
+	            nRef.current += 1;
+	            update(nRef.current);
+	          }}>
+	          +1
+	      </button>
+	        <button onClick={log}>log</button>
+	      </p>
+	    </div>
+	  );
+	}
+	
+	export default App;
 
