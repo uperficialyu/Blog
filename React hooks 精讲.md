@@ -382,6 +382,8 @@ setN(i=>i+1)
 4. 调用写({type:操作类型'})
 5. 总得来说useReducer是useState的复杂版
 
+简单的一个useReducer
+
 	import React, { useReducer } from "react";
 	
 	const initial = {
@@ -423,3 +425,15 @@ setN(i=>i+1)
 	}
 	
 	export default App;
+
+#### 如何代替Redux
+步骤
+
+1. 将数据集中在一个store对象
+2. 将所有操作集中在reducer
+3. 创建一个Context
+4. 创建对数据的读写API
+5. 将第四步的内容放到第三步的Context
+6. 用Context. Provider将Context提供给所有组件
+7. 各个组件用useContext获取读写API
+
