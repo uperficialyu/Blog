@@ -251,3 +251,175 @@ useContext不仅贯穿始终，还能贯穿不同组件
 	
 	export default App;
 
+使用useContext
+
+	import React, { useContext, useState } from "react";
+	
+	const themeContext = React.createContext(null);
+	
+	function App() {
+	  const [theme, setTheme] = useState("red");
+	  return (
+	    <themeContext.Provider value={{ theme, setTheme }}>
+	      <div style={{color: theme}}>
+	        <p>{theme}</p>
+	        <div>
+	          <ChildA />
+	        </div>
+	        <div>
+	          <ChildB />
+	        </div>
+	      </div>
+	    </themeContext.Provider>
+	  );
+	}
+	
+	function ChildA() {
+	  const { setTheme } = useContext(themeContext);
+	  return (
+	    <div>
+	      <button onClick={() => setTheme('red')}>red</button>
+	    </div>
+	  )
+	}
+	
+	function ChildB() {
+	  const { setTheme } = useContext(themeContext);
+	  return (
+	    <div>
+	      <button onClick={() => setTheme('blue')}>blue</button>
+	    </div>
+	  )
+	}
+	
+	export default App;
+
+## hooks全解
+
+## useState
+
+使用状态
+
+	const [n, setN] = React.useState(0)
+	const [user, setUser] = React.useState({name:'F'})
+
+注意1：不可局部更新
+
+如果state是一个对象，能否部分setState?  
+不行，因为setState不会帮我们合并属性  
+那么useReducer会合并属性吗？也不会!  
+
+	import React, { useState } from "react";
+	
+	function App() {
+	  const [user, setUser] = useState({ name: 'Frank', age: 18 })
+	  const onClick = () => {
+	    setUser({
+	      ...user,
+	      name: 'Jack'
+	    })
+	  };
+	
+	  return (
+	    <div C lassName=" App">
+	      <h1>{user.name}</h1>
+	      <h2>{user.age}</h2>
+	      <button onClick={onClick}>Click</button>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+注意2：地址要变  
+
+setState(obj)如果obj地址不变，那么React就认为数据没有变化
+
+useState可以使用函数
+
+	const [state, setState] = useState(()=>{
+		return initialState
+	})
+
+该函数返回初始state,且只执行一次  
+setState接受函数  
+setN(i=>i+1)  
+什么时候用这种方式？  
+如果你能接受这种形式，应该优先使用这种形式  
+
+	import React, { useState } from 'react';
+	
+	function App() {
+	  const [x, setX] = useState( () => (2+2) );
+	
+	  const click = () => {
+	    // setX(x+1)
+	    // setX(x+1)
+	
+	    setX(x => x+1)
+	    setX(x => x+1)
+	  }
+	
+	  return (
+	    <div>
+	      <p>You clicked {x} times</p>
+	      <button onClick={click}>
+	        Click me
+	      </button>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+## useReducer
+
+用来践行Flux/Redux的思想，看代码，共分4步走
+
+1. 创建初始值initialState
+2. 创建所有操作reducer(state, action)
+3. 传给useReducer,得到读和写API
+4. 调用写({type:操作类型'})
+5. 总得来说useReducer是useState的复杂版
+
+	import React, { useReducer } from "react";
+	
+	const initial = {
+	  n: 0
+	};
+	
+	const reducer = (state, action) => {
+	  if (action.type === 'add') {
+	    return { n: state.n + action.number }
+	  } else if (action.type === 'multi') {
+	    return { n: state.n * 2 }
+	  } else {
+	    throw new Error('unknow type')
+	  }
+	}
+	
+	function App() {
+	  const [state, dispatch] = useReducer(reducer, initial);
+	  const { n } = state;
+	
+	  const onClick = () => {
+	    dispatch({ type: 'add', number: 1 })
+	  };
+	  const onClick2 = () => {
+	    dispatch({ type: 'add', number: 2 })
+	  }
+	  const onClick3 = () => {
+	    dispatch({ type: 'multi', number: 2 })
+	  }
+	
+	  return (
+	    <div>
+	      <h1>n: {n}</h1>
+	      <button onClick={onClick}>+1</button>
+	      <button onClick={onClick2}>+2</button>
+	      <button onClick={onClick3}>*2</button>
+	    </div>
+	  );
+	}
+	
+	export default App;
