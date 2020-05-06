@@ -437,3 +437,190 @@ setN(i=>i+1)
 6. 用Context. Provider将Context提供给所有组件
 7. 各个组件用useContext获取读写API
 
+一个简单useReduce代码
+	import React, { useReducer, useContext, useEffect, createContext } from 'react';
+	
+	const store = {
+	  user: null,
+	  books: null,
+	  movies: null 
+	};
+	
+	const reducer = (state, action) => { 
+	  switch (action.type) {
+	    case 'setUser':
+	      return { ...state, user: action.user };
+	    case 'setBooks':
+	      return { ...state, books: action.books };
+	    case 'setMovies':
+	      return { ...state, movies: action.movies };
+	    default:
+	      throw new Error();
+	  }
+	}
+	
+	const Context = createContext(null);
+	
+	function App() {
+	  const[state, dispatch] = useReducer(reducer, store);
+	
+	  return (
+	    <Context . Provider value={{state, dispatch}}>
+	    <User /> 
+	    <hr />
+	    <Books />
+	    <Movies />
+	  </Context.Provider>
+	  );
+	}
+	
+	function User() {
+	  const { state, dispatch } = useContext(Context);
+	  useEffect(() => {
+	    ajax("/user").then(user => {
+	      dispatch({ type: "setUser", user: user });
+	    });
+	  }, []);
+	
+	  return (
+	    <div>
+	    <h1>个人信息</h1>
+	    <div>name: {state.user ? state.user.name : ""}</div> 
+	    </div>
+	  );
+	}
+	
+	function Books() {
+	  const { state, dispatch } = useContext(Context);
+	  useEffect(() => {
+	  ajax("/books").then(books => {
+	    dispatch({ type: "setBooks", books: books });
+	  });
+	  }, []);
+	
+	  return (
+	    <div> 
+	      <h1>我的书籍</h1>
+	      <ol>
+	        {state.books ? state.books.map(book => <li key={book.id}>{book.name}</li>) : ''}
+	      </ol>
+	    </div>
+	  );
+	}
+	
+	function Movies() {
+	  const { state, dispatch } = useContext(Context);
+	  useEffect(() => {
+	    ajax("/movies").then(movies => {
+	      dispatch({ type: "setMovies", movies: movies });
+	    });
+	  }, []);
+	
+	  return (
+	    <div>
+	      <h1>我的电影</h1>
+	      <ol>
+	        {
+	        state.movies
+	        ? state.movies.map(movie => <li key={movie.id}>{movie.name}</li>)
+	          : '加载中'
+	        }
+	      </ol>
+	    </div>
+	  );
+	}
+	
+	export default App;
+	  
+	function ajax(path) {
+	  return new Promise((resolve, reject) => {
+	    setTimeout(() => {
+	      if (path === "/user") {
+	        resolve({
+	          id: 1,
+	          name: 'Fuck'
+	        });
+	      } else if (path === '/books') {
+	        resolve([
+	          {
+	            id: 1,
+	            name: 'JavaScript高级程序设计'
+	          },
+	          {
+	            id: 2,
+	            name: "JavaScript 精粹"
+	          }
+	        ]);
+	      } else if (path === "/movies") {
+	        resolve([
+	          {
+	            id: 1,
+	            name: '爱在黎明破晓前'
+	          },
+	          {
+	            id: 2,
+	            name: '恋恋笔记本'
+	          }
+	        ]);
+	      }
+	    }, 2000);
+	  });
+	}
+ 
+## useContext
+上下文
+
+1. 全局变量是全局的上下文
+2. 上下文是局部的全局变量
+
+使用方法
+
+1. 使用C = createContext(initial)创建上下文
+2. 使用<C.provider>圈定作用域
+3. 在作用域内使用useContext(C)来使用上下文
+
+context的使用：
+
+	import React, { useState, useContext, createContext } from 'react';
+	
+	const C = createContext(null);
+	
+	function App() {
+	  const [n, setN] = useState(0);
+	  return (
+	    <C.Provider value={{ n, setN }}>
+	      <Baba />
+	    </C.Provider>
+	  );
+	}
+	
+	function Baba() {
+	  return ( 
+	    <div>
+	      我是爸爸<Child />
+	    </div> 
+	  );
+	}
+	
+	function Child() {
+	  const { n, setN } = useContext(C);
+	  const onClick = () => {
+	    setN(i => i + 1);
+	  };
+	
+	return (
+	  <div>
+	    我是儿子我得到的n: {n}
+	    <button onClick= {onClick }>+1</button>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+
+useContext注意事项
+
+1. 不是响应式的
+2. 你在一个模块将C里面的值改变
+3. 另一个模块不会感知到这个变化
