@@ -624,3 +624,140 @@ useContext注意事项
 1. 不是响应式的
 2. 你在一个模块将C里面的值改变
 3. 另一个模块不会感知到这个变化
+
+## useEffect
+副作用
+
+1. 对环境的改变即为副作用，如修改document.title
+2. 但我们不一定非要把副作用放在useEffect里
+3. 实际上叫做afterRender更好，每次render后运行
+
+用途
+
+1. 作为componentDidMount使用，[]作第二个参数
+2. 作为componentDidUpdate使用，可指定依赖
+3. 作为componentWillUnmount使用，通过return
+4. 以上三种用途可同时存在
+
+特点
+
+1. 如果同时存在多个useEffect,会按照出现次序执行
+
+useEffect的使用
+
+	import React, { useState, useEffect } from 'react';
+	
+	function App() {
+	  const [n, setN] = useState(0);
+	  const onClick = () => {
+	    setN(i => i + 1) ;
+	  };
+	
+	  useEffect(() => {
+	    console.log( "第-次渲染之后执行这一句话");
+	  }, []); // [] 里面的变量变化时再次执行 不会再次执行
+	
+	  useEffect(() => {
+	    console.log("n变化了");
+	  }, [n]); // n变化后执行
+	
+	  useEffect(() => {
+	    console.log("任何状态变化执行");
+	  }); // 任何状态变化都执行
+	
+	  useEffect(() => {
+	    const id = setInterval(() => {
+	      console.log('hello world');
+	    },1000);
+	    return () =>{
+	      window.clearInterval(id);
+	    }
+	  }); // 任何状态变化都执行
+	
+	  return (
+	    <div>
+	      n: {n}
+	      <button onClick={onClick}>+1</button>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+## useLayoutEffect
+
+布局副作用
+
+1. useEffect在浏览器渲染完成后执行
+2. useLayoutEffect在浏览器渲染前执行
+
+特点
+1. useLayoutEffect总是比useEffect先执行
+2. useLayoutEffect里的任务最好影响了Layout
+
+经验
+
+1. 为了用户体验，优先使用useEffect (优先渲染)
+
+useLayoutEffect的使用
+
+	import React, { useState, useEffect, useLayoutEffect } from 'react';
+	
+	function App() {
+	  const [value, setValue] = useState(0);
+	
+	  useEffect(() => {
+	    document.querySelector('#x').innerHTML = 'value：1000';
+	  }, [value]);
+	
+	  useLayoutEffect(() => {
+	    document.querySelector('#y').innerHTML = 'value：1000';
+	  }, [value]);
+	
+	  return (
+	    <div>
+	      <div id="x" onClick={() => setValue(0)}>value:{value}</div>
+	      <div id="y" onClick={() => setValue(0)}>value:{value}</div>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+useEffect和useLayoutEffect的时间对比
+
+	import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+	
+	function App() {
+	  const [n, setN] = useState(0);
+	  const time = useRef(null);
+	  const onClick = () => {
+	    setN(i => i + 1);
+	    time.current = performance.now();
+	  };
+	
+	  useEffect(() => {
+	    if (time.current) {
+	      console.log('useEffect', performance.now() - time.current);
+	    }
+	  });
+	
+	  useLayoutEffect(() => {
+	    if (time.current) {
+	      console.log('useLayoutEffect', performance.now() - time.current);
+	    }
+	  });
+	
+	  return (
+	    <div>
+	      n: {n}
+	      <button onClick={onClick}>+1</button>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+
+
+
