@@ -758,7 +758,266 @@ useEffect和useLayoutEffect的时间对比
 	
 	export default App;
 
+## memo
+
+Child用React.memo(Child)代替  
+如果props不变，就没有必要再次执行一个函数组件
+
+	import React, { useState, memo } from 'react';
+	
+	function App() {
+	  const [n, setN] = useState(0);
+	  const [m, setM] = useState(0);
+	  const onClick = () => {
+	    setN(n + 1);
+	  };
+	  const onClick2 = () => {
+	    setM(m => m + 1);
+	  };
+	
+	  return (
+	    <div className=" App">
+	      <div>
+	        <button onClick={onClick}>update n {n}</button>
+	        <button onClick={onClick2}>update m {m}</button>
+	      </div>
+	      <Child data={m} />
+	      {/* <Child data={m}/> */}
+	    </div>
+	  );
+	}
+	
+	
+	const Child = memo(props => {
+	  console.log("child执行了");
+	  return <div>child:{props.data}</div>;
+	});
+	
+	// const Child = props => {
+	//   console.log("child执行了");
+	//   return <div>child:{props.data}</div>;
+	// };
+	
+	export default App;
+
 ## useMemo
 
+这玩意有一个bug  
+添加了监听函数之后，一秒破功  
+因为App运行时会在次执行第12行，生成新的函数  
+新旧函数虽然功能一样，但是地址不一样!  
+
+	import React, { useState, memo, useMemo } from 'react';
+	
+	function App() {
+	  console.log('app执行了')
+	  const [n, setN] = useState(0);
+	  const [m, setM] = useState(0);
+	  const onClick = () => {
+	    setN(n + 1);
+	  };
+	  const onClick2 = () => {
+	    setM(m => m + 1);
+	  };
+	  const childClick = useMemo(() => {
+	    return () => {
+	      console.log(m);
+	    }
+	  }, [m])
+	
+	  // const childClick = () => {
+	  //   console.log(m);
+	  // }
+	
+	  return (
+	    <div className=" App">
+	      <div>
+	        <button onClick={onClick}>update n {n}</button>
+	        <button onClick={onClick2}>update m {m}</button>
+	      </div>
+	      <Child onClick={childClick} data={m} />
+	    </div>
+	  );
+	}
+	
+	
+	const Child = memo(props => {
+	  console.log("child执行了");
+	  return <div>child:{props.data}</div>;
+	});
+	
+	export default App;
+
+特点
+
+1. 第一个参数是()=> value,见定义
+2. 第二个参数是依赖[m,n]
+3. 只有当依赖变化时，才会计算出新的value
+4. 如果依赖不变，那么就重用之前的value
+5. 类似vue2的computed
+
+注意
+
+1. 如果你的value是个函数,那么你就要写成useMemo(()=> (x) => console.1og(x))
+2. 这是一个返回函数的函数
+3. 是不是很难用?于是就有了useCallback
+
+## useCallback
+用法
+
+1. useCallback(x => log(x)， [m])等价于
+2. useMemo(( ) => x => log(x), [m])
+
+## useRef
+
+目的
+
+1. 如果你需要-个值，在组件不断render时保持不变
+2. 初始化: const count = useRef(0)
+3. 读取: count.current
+4. 为什么需要current?
+5. 为了保证两次useRef是同一个值(只有引用能做到)
+
+看代码
+
+	import React, { useState, useRef, useEffect } from 'react';
+	
+	function App() {
+	  console.log('app执行了')
+	  const [n, setN] = useState(0);
+	  const count = useRef(0);
+	  const onClick = () => {
+	    setN(n + 1);
+	  };
+	  useEffect(() => {
+	    count.current += 1;
+	    console.log(count);
+	  });
+	
+	  return (
+	    <div className=" App">
+	      <div>
+	        <button onClick={onClick}>update n {n}</button>
+	      </div>
+	    </div>
+	  );
+	}
+	
+	export default App;
+
+延伸
+
+1. 看看Vue3的ref
+2. 初始化: const count = ref(0)
+3. 读取: count.value 
+4. 不同点:当count.value变化时，Vue 3会自动render
+
+useRef理念
+
+1. 能做到变化时自动render吗?不能!
+2. 为什么不能?因为这不符合React的理念
+3. React的理念是UI = f(data)
+4. 你如果想要这个功能，完全可以自己加
+5. 监听ref,当ref.current变化时，调用setX即可
+6. 不想自己加?那你就用Vue3吧，Vue3帮你加好了
+
+## forwardRef
+
+1. props 无法传递ref属性
+2. 实现ref的传递，需要使用forwardRef
+
+useRef 
+
+1. 可以用来引用DOM对象
+2. 也可以用来引用普通对象
+
+
+使用forwardRf
+
+	import React, { useRef, forwardRef } from 'react';
+	
+	function App() {
+	  const buttonRef = useRef(null);
+	
+	  return (
+	    <div>
+	      <div>
+	        <Button ref={buttonRef}>按钮</Button>
+	      </div>
+	    </div>
+	  );
+	}
+	
+	// const Button = (props) =>{
+	//   return <button {...props} />;
+	// }
+	
+	const Button = forwardRef((props, ref) =>{
+	  return <button ref={ref} {...props} />;
+	})
+	
+	export default App;
+
+forwardRef
+
+1. 由于props不包含ref,所以需要forwardRef
+2. 为什么props不包含ref呢?因为大部分时候不需要
+
+## 自定义Hook
+1. 封装数据操作
+2. 你还可以在自定义Hook里使用Context
+3. useState只说了不能在if里，没说不能在函数里运行，只要这个函数在函数组件里运行即可
+
+自定义hook代码
+
+	import React, { useState, useEffect } from "react";
+	
+	const useList = () => {
+	  const [list, setList] = useState(null);
+	  useEffect(() => {
+	    ajax("/list").then(list => {
+	      setList(list);
+	    });
+	  }, []); // [], 确保只在第一 次运行
+	  return {
+	    list: list,
+	    setList
+	  };
+	};
+	
+	function ajax() {
+	  return new Promise((resolve, reject) => {
+	    setTimeout(() => {
+	      resolve([
+	        { id: 1, name: "Frank" },
+	        { id: 2, name: "Jack" },
+	        { id: 3, name: "Alice" },
+	        { id: 4, name: "Bob" }
+	      ]);
+	    }, 2000);
+	  });
+	}
+	
+	function App() {
+	  const { list } = useList();
+	  return (
+	    <div>
+	      <h1>List</h1>
+	      <ol>
+	        { list ? (
+	          <ol>
+	            {
+	              list.map(item => (<li key={item.id}>{item.name}</li>))
+	            }
+	          </ol>
+	        ) : ("加载中")
+	        }
+	      </ol>
+	    </div>
+	  );
+	}
+	
+	
+	export default App;
 
 
