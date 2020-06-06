@@ -56,6 +56,18 @@ displayName() 是定义在 init() 里的内部函数，并且仅在 init() 函�
 		})();
 	}
 
+如果每隔一秒输出值呢？
+
+	for (var i = 1; i < 4; i++) {
+	  (function (a) {
+	    setTimeout(function () {
+	      console.log(a);
+	    }, a * 1000);
+	  })(i)
+	}
+
+
+
 ##### 循环创建闭包会出现一个常见的错误
 	<p id="help">Helpful notes will appear here</p>
 	<p>E-mail: <input type="text" id="email" name="email"></p>
