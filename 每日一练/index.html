@@ -7,9 +7,8 @@
 </head>
 <body>
   <script>
-    let a = 123;
-    var b = 123;
-    console.log(window)
+    const fun = new Function('a', 'b', 'return a + b')
+    console.log(fun())
   </script>
 </body>
 </html>
