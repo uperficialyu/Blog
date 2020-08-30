@@ -9,28 +9,28 @@
   <script>
 // =>example：要检测的实例
 // =>classFunc:要检测的类
-function instance_of(example, classFunc) {
-  let classPrototype = classFunc.prototype,
-    proto = example.__proto__;
-  while (true) {
-    if (proto === null) {
-      // 到了Object.prototype.__proto__
-      return false;
-    }
-    if (proto === classPrototype) {
-      // 在当前实例的原型链上找到了当前类
-      return true;
-    }
-    proto = proto.__proto__;
-  }
-}
-let res = instance_of([12, 23], Array);
-console.log(res); //=>true
+// function instance_of(example, classFunc) {
+//   let classPrototype = classFunc.prototype,
+//     proto = example.__proto__;
+//   while (true) {
+//     if (proto === null) {
+//       // 到了Object.prototype.__proto__
+//       return false;
+//     }
+//     if (proto === classPrototype) {
+//       // 在当前实例的原型链上找到了当前类
+//       return true;
+//     }
+//     proto = proto.__proto__;
+//   }
+// }
+// let res = instance_of([12, 23], Array);
+// console.log(res); //=>true
 
-		/* // Function.prototype : Symbol.hasInstance
-		console.log([] instanceof Array);
-		// 浏览器内部其实是基于Symbol.hasInstance检测的
-		console.log(Array[Symbol.hasInstance]([])); */
+// Function.prototype : Symbol.hasInstance
+console.log([] instanceof Array);
+// 浏览器内部其实是基于Symbol.hasInstance检测的
+console.log(Array[Symbol.hasInstance]([]));
   </script>
 </body>
 </html>
