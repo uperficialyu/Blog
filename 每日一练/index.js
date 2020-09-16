@@ -1,64 +1,87 @@
-// let p1 = new Promise();
-// Uncaught TypeError: Promise resolver undefined is not a function
+/*
+		 * 曹超要结婚 (7.5)
+		 *    计划表：把结婚当天要做的事情一件件都列举出来
+		 *    结婚时：按照计划表中的计划一件件的去执行即可
+		 * =>发布订阅（按照了DOM2事件池的机制）
+		 * 1.创建事件池
+		 * 2.向事件池中追加方法/移除方法
+		 * 3.通知事件池中的方法执行
+		 */
+(function () {
+	const hasOwn = Object.prototype.hasOwnProperty;
+	class Sub {
+		// 创建事件池
+		pond = {};
+		// SUB.PROTOTYPE
+		on(type, func) {
+			let pond = this.pond,
+				listeners;
+			!hasOwn.call(pond, type) ? pond[type] = [] : null;
+			listeners = pond[type];
+			!listeners.includes(func) ? listeners.push(func) : null;
+		}
+		off(type, func) {
+			let pond = this.pond,
+				listeners = pond[type] || [];
+			if (listeners.length === 0) return;
+			for (let i = 0; i < listeners.length; i++) {
+				if (listeners[i] === func) {
+					// listeners.splice(i, 1); //=>会导致数组踏实
+					listeners[i] = null;
+					return;
+				}
+			}
+		}
+		fire(type, ...params) {
+			let pond = this.pond,
+				listeners = pond[type] || [];
+			if (listeners.length === 0) return;
+			for (let i = 0; i < listeners.length; i++) {
+				let itemFunc = listeners[i];
+				if (typeof itemFunc !== "function") {
+					listeners.splice(i, 1);
+					i--;
+					continue;
+				}
+				itemFunc(...params);
+			}
+		}
+	}
 
-// 在NEW PROMISE的同时就把executor函数执行了
-// =>executor函数中有两个默认的形参：resolve/reject 函数
-// =>executor函数中一般用来管理一个异步编程（当然只写同步的也可以）
+	window.subscribe = function subscribe() {
+		return new Sub();
+	};
+})();
 
-// 每一个PROMISE的实例都有两个重要的信息
-// =>[[PromiseStatus]]：PROMISE状态（pending准备状态/resolved(fulfilled)成功状态/rejected失败状态）
-// =>[[PromiseValue]]：PROMISE值（一般存放异步编程的处理结果）
+function fn1() {
+	console.log(1);
+}
 
-// resolve/reject这个两个函数的执行，目的就是改变[[PromiseStatus]]/[[PromiseValue]]
-// =>一但状态设置为成功或者失败，则不能在改变为其它的
-// =>resolve执行是成功   reject执行是失败
-// =>执行函数传递的结果就是[[PromiseValue]]
+function fn2() {
+	console.log(2);
+	plan.off('A', fn1);
+	plan.off('A', fn2);
+}
 
-//=>>> Promise.resolve(100) 创建一个状态为成功值为100的PROMISE实例
-//=>>> Promise.reject(200) ...
-//=>>> Promise.all([promise1,promise2,...]) 所有实例都成功，整体返回的PROMISE实例才是成功，只要有一个失败，整体实例就是失败的
-//=>>> Promise.race([promise1,promise2,...]) 多个PROMISE实例同时进行，谁先处理完，以谁的状态作为最后的整体状态（不论是成功还是失败）
+function fn3() {
+	console.log(3);
+}
 
-/* let p1 = new Promise((resolve, reject) => {
-	/!* setTimeout(_ => {
-		// resolve(100);
-		// reject(200);
-	}, 1000); *!/
-	reject(100); //=>resolve/reject的执行是异步编程，需要等到THEN把方法存放好后，在根据状态通知THRN存放的某个方法执行
-});
-// P1成功还是失败直接看EXECUTOR函数中执行的是哪个方法
-// 每一次执行THEN会返回一个新的POMISE实例  P2
-// =>不管P1.THEN中哪个方法执行，只要执行不报错，则P2的状态就是成功，相反只要报错，P2就是失败，并且方法返回的结果就是P2的VALUE值
-// =>如果P1.THEN中某个方法的执行，返回的是一个新的PROMISE实例，则新实例的最后结果直接影响了P2的结果
-let p2 = p1.then(result => {
-	// 当PROMISE实例状态为成功，执行THEN存放的第一个函数；RESULT是[[PromiseValue]]
-	return 10;
-}, reason => {
-	// 当PROMISE实例状态为失败，执行THEN存放的第二个函数；
-	return Promise.resolve('OK');
-});
+function fn4() {
+	console.log(4);
+}
 
-let p3 = p2.then(result => {}, reason => {}); */
+function fn5(n, m) {
+	console.log(5, n, m);
+}
 
-//=>>> p3.then(null,reason => {})
-// p3.catch(reason => {});
+let plan = subscribe();
+plan.on('A', fn1);
+plan.on('A', fn2);
+plan.on('A', fn3);
+plan.on('A', fn4);
+plan.on('A', fn5);
 
-// 如果THEN中的某个方法没有写，则顺延至下一个TEHN的指定方法中
-Promise.reject('NO').then(result => {
-	console.log('成功:' + result);
-	return 1;
-}, /* reason => {
-	return Promise.reject(reason);
-} */).then(/* result => {
-	return Promise.resolve(result);
-},  */reason => {
-	console.log('失败:' + reason);
-});
-
-Promise.reject('NO').then(result => {
-	
-}).catch(reason => {
-
-}).then(result=>{
-
-});
+document.onclick = () => {
+	plan.fire('A', 10, 20);
+};
