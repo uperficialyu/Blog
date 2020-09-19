@@ -1,10 +1,11 @@
-box.onclick = function () {
-	console.log('OK');
+center.onclick = function (ev) {
+	console.log('CENTER');
+	ev.stopPropagation();
 };
-
-box.addEventListener('click', function () {
-	console.log('DOM2=>OK');
-});
-box.addEventListener('click', function () {
-	console.log('DOM2=>NO');
-});
+inner.onclick = function (ev) {
+	console.log('INNER');
+	ev.stopPropagation();
+};
+outer.onclick = function () {
+	console.log('OUTER');
+};
