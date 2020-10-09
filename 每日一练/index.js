@@ -1,11 +1,4 @@
-center.onclick = function (ev) {
-	console.log('CENTER');
-	ev.stopPropagation();
-};
-inner.onclick = function (ev) {
-	console.log('INNER');
-	ev.stopPropagation();
-};
-outer.onclick = function () {
-	console.log('OUTER');
-};
+var arr1 = [1, 2, 3, 4];
+var arr2 = arr1;
+arr2[0] = 3;
+console.log(arr2); // [3,2,3,4]
