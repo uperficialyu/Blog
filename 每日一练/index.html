@@ -5,37 +5,67 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-  <title>十年珠峰、专注前端</title>
-<style>
-  #outer {
-    margin: 20px auto;
-    width: 300px;
-    height: 300px;
-    background: red;
-  }
-
-  #inner {
-    margin: 20px auto;
-    width: 200px;
-    height: 200px;
-    background: green;
-  }
-
-  #center {
-    margin: 20px auto;
-    width: 100px;
-    height: 100px;
-    background: blue;
-  }
-</style>
+  <title>11</title>
 </head>
 
 <body>
-<div id="outer">
-  <div id="inner">
-    <div id="center"></div>
-  </div>
-</div>
+<script>
+let ary = [
+  { name: 1, age: 2, number: 1, son: 'son1' },
+  { name: 2, age: 23, number: 2, son: 'son2' },
+  { name: 2, age: 22, number: 3, son: 'son3' },
+  { name: 1, age: 12, number: 4, son: 'son4' },
+  { name: 1, age: 42, number: 5, son: 'son5' }
+]
+
+function fn (ary) {
+  let arr = [];
+  return arr;
+}
+
+// fn(ary)
+// // 结果为
+// [
+//   {
+//     "name":1,
+//     "list":[{"number":1,"son":"son1"},{"number":4,"son":"son4"},{"number":5,"son":"son5"}]
+//   },
+//   {
+//     "name":2,
+//     "list":[{"number":2,"son":"son2"},{"number":3,"son":"son3"}]
+//   }
+// ]
+
+function fn(ary) {
+	let arr = [];
+	ary.forEach(item => {
+		let bol = arr.some(val => {
+			if (val.name === item.name) {
+				let obj = {};
+				Object.keys(item).forEach(v => {
+					if (v != 'name' && v != 'age') {
+						obj[v] = item[v]
+					}
+				})
+				val.list.push(obj);
+				return true
+			}
+		})
+		if (!bol) {
+			let obj = {};
+			Object.keys(item).forEach(v => {
+				if (v != 'name' && v != 'age') {
+					obj[v] = item[v]
+				}
+			})
+			arr.push({ name: item.name, list: [obj] });
+		}
+	})
+	return arr;
+}
+fn(ary)
+console.log(fn(ary))
+</script>
 </body>
 
 </html>
