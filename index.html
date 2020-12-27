@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    body {
+      height: 3000px;
+      overflow-x: hidden;
+      background: -webkit-linear-gradient(top left, lightblue, pink, orange);
+    }
+  </style>
+</head>
+
+<body>
+  <button id="submit">点击</button>
+  <script>
+
+function throttle(func, wait) {
+  if (typeof func !== "function") throw new TypeError("func must be an function!");
+  if (typeof wait === "undefined") wait = 500;
+  let timer = null,
+    previous = 0; //记录上一次操作的时间
+  return function proxy(...params) {
+    let self = this,
+      now = new Date(), //当前这次触发操作的时间
+      remaining = wait - (now - previous);
+    if (remaining <= 0) {
+      // 两次间隔时间超过wait了，直接执行即可
+      clearTimeout(timer);
+      timer = null;
+      previous = now;
+      func.call(self, ...params);
+    } else if (!timer) {
+      // 两次触发的间隔时间没有超过wait，则设置定时器，让其等待remaining这么久之后执行一次「前提：没有设置过定时器」
+      timer = setTimeout(function () {
+        clearTimeout(timer);
+        timer = null;
+        previous = new Date();
+        func.call(self, ...params);
+      }, remaining);
+    }
+  };
+}
+
+function handle() {
+  console.log('OK');
+}
+window.onscroll = throttle(handle, 500);
+
+  </script>
+</body>
+
+</html>
