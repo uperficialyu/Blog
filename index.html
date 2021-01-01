@@ -7,31 +7,58 @@
   <title>Document</title>
 
   <style>
-    body {
-      height: 3000px;
-      overflow-x: hidden;
-      background: -webkit-linear-gradient(top left, lightblue, pink, orange);
-    }
+/* 原理1: 层叠上下文 - html层叠上下文元素里面
+  特性:  层叠顺序 =>  
+  背景或边框 <  z-index负值 < 块级元素  < 浮动元素 < 行内块 <  position < z-index正值
+  aside浮动元素
+  main块级元素
+
+  原理2: BFC规则
+  BFC元素不会与float容器重叠
+  BFC是一个独立的容器   和外面的元素互不影响
+*/
+.aside {
+  width: 100px;
+  height: 150px;
+  float: left;
+  background: #f66;
+}
+
+.main {
+  height: 200px;
+  background: #fcc;
+  overflow: hidden;
+}
   </style>
 </head>
 
 <body>
-  <button id="submit">点击</button>
+
+  <div class="aside"></div>
+  <div class="main"></div>
   <script>
 
+    // 继承的目的：让字类的实例同时也具有父类中私有的属性和公共方法
+    // js的第一种继承方案：原型链继承（让子类的原型等于父类的实例即可）
+    function Parent() {
+      this.x = 100;
+    }
+    Parent.prototype.getX = function getX() {
+      return this.x;
+    }
 
+    function Child() {
+      this.y = 200;
+    }
+    // 子类的实例，能够用子类私有的和原型上公有的
+    // 父类的实例，能够使用父类私有的和原型上公有的
+    Child.prototype = new Parent;
+    Child.prototype.getY = function getY() {
+      return this.y;
+    }
 
-var xhr = new XMLHttpRequest()
-xhr.onreadystatechange = function () {
-  if (xhr.readyState === 4 && xhr.status === 200) {
-    window.name = xhr.responseText
-    location.href = 'http://www.A.com:80/a.html'
-  }
-}
-xhr.open('GET', 'http://www.B.com:80/json', true)
-xhr.send(null)
-
-
+    let c1 = new Child;
+    console.log(c1, 'c1')
 
 
 
