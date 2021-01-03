@@ -38,27 +38,26 @@
   <div class="main"></div>
   <script>
 
-    // 继承的目的：让字类的实例同时也具有父类中私有的属性和公共方法
-    // js的第一种继承方案：原型链继承（让子类的原型等于父类的实例即可）
-    function Parent() {
-      this.x = 100;
-    }
-    Parent.prototype.getX = function getX() {
-      return this.x;
-    }
-
-    function Child() {
-      this.y = 200;
-    }
-    // 子类的实例，能够用子类私有的和原型上公有的
-    // 父类的实例，能够使用父类私有的和原型上公有的
-    Child.prototype = new Parent;
-    Child.prototype.getY = function getY() {
-      return this.y;
-    }
-
-    let c1 = new Child;
-    console.log(c1, 'c1')
+async function async1() {
+	console.log('async1 start');
+	await async2();
+	console.log('async1 end');
+}
+async function async2() {
+	console.log('async2');
+}
+console.log('script start');
+setTimeout(function () {
+	console.log('setTimeout');
+}, 0)
+async1();
+new Promise(function (resolve) {
+	console.log('promise1');
+	resolve();
+}).then(function () {
+	console.log('promise2');
+});
+console.log('script end');
 
 
 
