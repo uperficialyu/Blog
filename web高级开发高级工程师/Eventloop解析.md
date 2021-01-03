@@ -1,4 +1,20 @@
 
+## 任务队列
+
+因为JavaScript是单线程的。意味着，前一个任务结束，才会执行后一个任务。如果前面一个任务执行的时间很长，后面一个任务不得不等待，会形成卡死现象。
+
+如果仅仅只是计算量太大了，也算了。但是很多时候，cpu是闲着的，比如io输入输出，ajax请求，难道不得不等待结果，再执行吗？
+
+JavaScript语言的设计者意识到，这时主线程完全可以不管IO设备，挂起处于等待中的任务，先运行排在后面的任务。等到IO设备返回了结果，再回过头，把挂起的任务继续执行下去。
+
+于是，所有任务可以分成两种，一种是同步任务（synchronous），另一种是异步任务（asynchronous）。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入"任务队列"（task queue）的任务，只有"任务队列"通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。
+
+微任务的优先级永远高于宏任务，宏任务的优先级是按照谁先到执行时间，谁先执行。
+
+宏任务：定时器，ajax，事件绑定
+
+微任务：promise，async，await
+
 #### 统计代码执行时间
 
   ```javascript
@@ -165,3 +181,63 @@
 | console.log('async2') | - | - |
 | console.log('promise1') | - | - |
 | console.log('script end') | - | - |
+
+##### 练习6：
+
+  ```javascript
+  function func1() {
+    console.log('func1 start');
+    return new Promise(resolve => {
+      resolve('OK');
+    });
+  }
+  function func2() {
+    console.log('func2 start');
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve('OK');
+      }, 10);
+    });
+  }
+  console.log(1);
+  setTimeout(async () => {
+    console.log(2);
+    await func1();
+    console.log(3);
+  }, 20);
+  for (let i = 0; i < 90000000; i++) { } //循环大约要进行80MS左右
+  console.log(4);
+  func1().then(result => {
+    console.log(5);
+  });
+  func2().then(result => {
+    console.log(6);
+  });
+  setTimeout(() => {
+    console.log(7);
+  }, 0);
+  console.log(8);
+  ```
+
+答案：
+1. 1
+2. 4
+3. func1 start
+4. func2 start
+5. 8
+6. 5
+7. 7
+8. 2
+9. func1 start
+10. 3
+11. 6
+
+解析：先执行同步任务，然后执行微任务，最后执行宏任务。
+
+| GUI线程 | 微任务 |宏任务 | 
+| --- | --- | --- |
+| console.log(1) | 任务1：console.log(5) | 任务1：20毫秒后执行async () |
+| console.log(4) | 任务2：console.log(3) | 任务2：20毫秒后执行resolve('OK') |
+| console.log('func1 start') | 任务3：console.log(6) | 任务3：5-6毫秒后执行console.log(7) |
+| console.log('func2 start') | - | - |
+| console.log(8) | - | - |

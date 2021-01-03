@@ -7,7 +7,7 @@
   <title>Document</title>
 
   <style>
-/* 原理1: 层叠上下文 - html层叠上下文元素里面
+    /* 原理1: 层叠上下文 - html层叠上下文元素里面
   特性:  层叠顺序 =>  
   背景或边框 <  z-index负值 < 块级元素  < 浮动元素 < 行内块 <  position < z-index正值
   aside浮动元素
@@ -17,18 +17,18 @@
   BFC元素不会与float容器重叠
   BFC是一个独立的容器   和外面的元素互不影响
 */
-.aside {
-  width: 100px;
-  height: 150px;
-  float: left;
-  background: #f66;
-}
+    .aside {
+      width: 100px;
+      height: 150px;
+      float: left;
+      background: #f66;
+    }
 
-.main {
-  height: 200px;
-  background: #fcc;
-  overflow: hidden;
-}
+    .main {
+      height: 200px;
+      background: #fcc;
+      overflow: hidden;
+    }
   </style>
 </head>
 
@@ -38,26 +38,37 @@
   <div class="main"></div>
   <script>
 
-async function async1() {
-	console.log('async1 start');
-	await async2();
-	console.log('async1 end');
+function Stack() {
+  this.container = [];
+  this.temp = [];
 }
-async function async2() {
-	console.log('async2');
-}
-console.log('script start');
-setTimeout(function () {
-	console.log('setTimeout');
-}, 0)
-async1();
-new Promise(function (resolve) {
-	console.log('promise1');
-	resolve();
-}).then(function () {
-	console.log('promise2');
-});
-console.log('script end');
+Stack.prototype = {
+  constructor: Stack,
+  enter(element) {
+    this.container.unshift(element);
+    let min = this.temp[0];
+    if (!min || element < min) {
+      this.temp.unshift(element);
+    }
+  },
+  leave() {
+    return this.container.shift();
+  },
+  min() {
+    // return this.container.sort((a, b) => a - b)[0];
+    // return Math.min(...this.container); //=>Math.min(6, 20, 13, 5, 10) ES6中的展开运算符
+    return this.temp[0] || null;
+  }
+};
+
+let stack = new Stack;
+stack.enter(10);
+stack.enter(5);
+stack.enter(13);
+stack.enter(20);
+stack.enter(6);
+
+console.log(stack);
 
 
 
