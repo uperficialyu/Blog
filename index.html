@@ -38,37 +38,13 @@
   <div class="main"></div>
   <script>
 
-function Stack() {
-  this.container = [];
-  this.temp = [];
+var a = 1;
+function fn(a){
+    console.log(a)
+    var a = 2;
+    function a(){}
 }
-Stack.prototype = {
-  constructor: Stack,
-  enter(element) {
-    this.container.unshift(element);
-    let min = this.temp[0];
-    if (!min || element < min) {
-      this.temp.unshift(element);
-    }
-  },
-  leave() {
-    return this.container.shift();
-  },
-  min() {
-    // return this.container.sort((a, b) => a - b)[0];
-    // return Math.min(...this.container); //=>Math.min(6, 20, 13, 5, 10) ES6中的展开运算符
-    return this.temp[0] || null;
-  }
-};
-
-let stack = new Stack;
-stack.enter(10);
-stack.enter(5);
-stack.enter(13);
-stack.enter(20);
-stack.enter(6);
-
-console.log(stack);
+fn(a);
 
 
 
