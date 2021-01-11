@@ -37,15 +37,70 @@
   <div class="aside"></div>
   <div class="main"></div>
   <script>
+// function func() {
+//   /*
+//     * EC(FUNC)私有上下文
+//     *    作用域链:<当前上下文,函数作用域>
+//     *    初始化THIS:（执行主体 !== 执行上下文）
+//     *    初始化ARGUMENTS:（箭头函数不用，因为没有ARGUMENTS）
+//     *    形参赋值:
+//     *    变量提升:
+//     *    代码执行:
+//     *
+//     */
+//   console.log(this);
+// }
 
-var a = 1;
-function fn(a){
-    console.log(a)
-    var a = 2;
-    function a(){}
-}
-fn(a);
+/*
+  * 函数的执行主体是谁，和函数在在哪创建的，以及在哪执行的都没有关系 
+  *    规律：
+  *    1. document.body.onclick=function(){}  this->body
+  *    2. 方法执行，我们去看方法名前面是否有“点”，有“点”它前面是谁THIS就是谁，没有“点”在非严格模式下THIS是WINDOW，严格模式下THIS是UNDEFIND
+*/
+		
+// window.name = "WINDOW";
+// function func() {
+//   console.log(this);
+// }
+// let obj = {
+//   name: 'OBJ',
+//   func
+// };
+// func(); // => this:window
+// obj.func(); // => this:obj 
+		
 
+// let arr = [];
+// arr.slice(); // => slice中的this:arr
+// arr.__proto__.slice(); // => slice中的this:arr.__proto__
+
+// 匿名函数（自执行函数/回调函数等）执行，一般方法中的THIS都是WINDOW|UNDEFINED
+// (function () {
+//   console.log(this);
+// })();
+
+// setTimeout(function () {
+//   // 回调函数：把函数作为值传递给另外一个函数，在另外一个函数的某个阶段把他执行
+//   console.log(this); // -> window
+// }, 1000);
+
+// [10, 20, 30].forEach(function (item, index) {
+//   console.log(this); // =>forEach中第二个参数不传递this:window，传递[context]，则this:[context]
+// },[context]);
+
+var x = 3,
+  obj = {x: 5};
+obj.fn = (function () {
+  this.x *= ++x;
+  return function (y) {
+    this.x *= (++x)+y;
+    console.log(x);
+  }
+})();
+var fn = obj.fn;
+obj.fn(6);
+fn(4);
+console.log(obj.x, x);
 
 
 
