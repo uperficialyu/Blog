@@ -1,0 +1,395 @@
+## 目录
+
+1. 闭包是什么
+2. 闭包的作⽤
+3. js有哪些数据类型
+4. 你有哪些方式检测数据类型
+5. 编写一个万能数据类型检测方法
+6. 讲下instanceof原理
+7. 手写instanceof
+8. 为什么会有BigInt的提案
+9. null与undefined的区别是什么
+10. 谈谈你对原型链的理解
+11. 如何判断是否是数组
+12. 谈⼀谈你对this的了解
+13. async/await是什么
+14. async/await相⽐于Promise的优势
+15. 简单介绍一下V8引擎的垃圾回收机制
+16. 哪些操作会造成内存泄漏
+17. 如何实现深拷贝
+18. 手写AJAX
+19. 移动端的点击事件的有延迟，时间是多久，为什么会有？怎么解决这个延时
+
+
+
+#### 1、闭包是什么？
+
+MDN的解释：闭包是函数和声明该函数的词法环境的组合。
+
+按照我的理解就是：闭包=函数和函数体内可访问的变量总和。
+
+#### 2、闭包的作⽤？
+
+1. 保护：保护自己的私有变量不受外界干扰（操作自己的私有变量和外界没有关系）
+2. 保存：如果当前上下文不被释放（只要让上下文的某个东西被外部占用即可），则存储的这些私有变量也不会被释放，可以供其下级上下文中调用，相当于把一些值保存起来了。
+
+我们把函数执行所带来的两大作用，称之为“闭包”（闭包不是任何的代码，而是函数运行的机制），市面上大多认为：只有上下文不背释放才是闭包，因为这样才保留下来了。
+
+#### 3、js有哪些数据类型？
+
+js中的数据类型主要分为2种：
+
+1. 基本数据类型（值类型）
+    - number（数字）
+    - string（字符串）
+    - boolean（布尔）
+    - null（空）
+    - undefind（未定义）
+    - symbol（唯一值） ES6中新增的数据类型（不能被new） 创建唯一值Symbol(10)===Symbol(10):false
+    - bigint（大数据值） ES6中新增的数据类型（不能被new） Number.MAX_SAFE_INTEGER（最大安全数）
+2. 引用数据类型
+    - object（对象）
+    - Array（数组）
+    - RegExp（正则）
+    - Date（日期）
+    - function（函数）
+
+#### 4、你有哪些方式检测数据类型？
+
+1. typeof
+    - typeof(null) => "object"
+    - typeof(数组/正则/日期/对象) => "object"
+2. instanceof
+    - 检测当前实例是否属于这个类（也可以用来检测数据类型：对typeof的补充）
+    - 不能用来处理基本数据类型（基本数据类型基于构造函数方式创建的实例是可以的）
+    - 只要出现在实例的原型链上的类，检测结果都是TRUE（页面中可以手动更改原型链的指向，这样导致检测结果不一定准确）
+3. constructor
+    - constructor也是一样可以被更改的（这个检测结果也不一定准确）
+    - 基本数据类型也可以处理
+4. Object.prototype.toString.call([val])
+    - 其它类的原型上的toString基本上都是转换为字符串的，只有Object原型上的是检测数据类型的返回结果 "[object 所属的类]"
+    - Object.prototype.toString执行，它中的this是谁，就是检测谁的数据类型
+    - Object.prototype.toString.call(xxx)
+    - ({}).toString.call(xxx)
+    - 最强大的检测数据类型方法（基本上没有弊端）
+
+#### 5、编写一个万能数据类型检测方法？
+
+  ```javascript
+  function toType(obj) {
+    let type = Object.prototype.toString.call(obj);
+    return /^\[object ([a-z]+)\]$/i.exec(type)[1].toLowerCase();
+  }
+  console.log(toType(1)); //=>"number"
+  console.log(toType(NaN)); //=>"number"
+  console.log(toType([])); //=>"array"
+  console.log(toType(/^\d+$/)); //=>"regexp"
+  console.log(toType({})); //=>"object"
+  ```
+
+#### 6、讲下instanceof原理？
+
+instanceof运算符用于检测构造函数的prototype属性是否出现在某个实例对象的原型链上。
+
+使用方法：
+
+  ```javascript
+  let arr = [],
+  reg = /^$/;
+  console.log(arr instanceof Array); //=>true
+  console.log(reg instanceof Array); //=>false
+  console.log(1 instanceof Number); //=>false
+  console.log(new Number(1) instanceof Number); //=>true
+  console.log(Symbol() instanceof Symbol); //=>false
+  console.log(arr instanceof Object); //=>true
+  function Fn() {}
+  Fn.prototype = Array.prototype;
+  let f = new Fn;
+  console.log(f instanceof Array); //=>true
+  ```
+
+#### 7、手写instanceof？
+
+方法1：
+
+  ```javascript
+	// => example：要检测的实例
+	// => classFunc:要检测的类
+	function instance_of(example, classFunc) {
+	  let classPrototype = classFunc.prototype,
+	    proto = Object.getPrototypeOf(example);
+	  while (true) {
+	    if (proto === null) {
+	      return false;
+	    }
+	    if (proto === classPrototype) {
+	      return true;
+	    }
+	    proto = Object.getPrototypeOf(proto);
+	  }
+	}
+	let res = instance_of([12, 23], Array);
+	console.log(res); //=>true
+  ```
+
+方法2：
+
+  ```javascript
+	// =>example：要检测的实例
+	// =>classFunc:要检测的类
+	function instance_of(example, classFunc) {
+	  let classPrototype = classFunc.prototype,
+	    proto = example.__proto__;
+	  while (true) {
+	    if (proto === null) {
+	      // 到了Object.prototype.__proto__
+	      return false;
+	    }
+	    if (proto === classPrototype) {
+	      // 在当前实例的原型链上找到了当前类
+	      return true;
+	    }
+	    proto = proto.__proto__;
+	  }
+	}
+	let res = instance_of([12, 23], Array);
+	console.log(res); //=>true
+  ```
+
+#### 8、为什么会有BigInt的提案？
+
+JavaScript中Number.MAX_SAFE_INTEGER表示最⼤安全数字，计算结果是9007199254740991，即在这个数范围内不会出现精度丢失（⼩数除外）。但是⼀旦超过这个范围，js就会出现计算不准确的情况，这在⼤数计算的时候不得不依靠⼀些第三⽅库进⾏解决，因此官⽅提出了BigInt来解决此问题。
+
+#### 9、null与undefined的区别是什么？
+
+null表示为空，代表此处不应该有值的存在，⼀个对象可以是null，代表是个空对象，⽽null本身也是对象。undefined表示『不存在』，JavaScript是⼀⻔动态类型语⾔，成员除了表示存在的空值外，还有可能根本就不存在（因为存不存在只在运⾏期才知道），这就是undefined的意义所在。
+
+#### 10、谈谈你对原型链的理解？
+
+这个问题关键在于两个点，⼀个是原型对象是什么，另⼀个是原型链是如何形成的。
+
+原型对象：
+
+绝⼤部分的函数(少数内建函数除外)都有⼀个prototype属性，这个属性是原型对象⽤来创建新对象实例，⽽所有被创建的对象都会共享原型对象，因此这些对象便可以访问原型对象的属性。例如 hasOwnProperty()⽅法存在于Obejct原型对象中，它便可以被任何对象当做⾃⼰的⽅法使⽤。
+
+  ```javascript
+  ⽤法：object.hasOwnProperty(propertyName)
+  hasOwnProperty()函数的返回值为Boolean类型。如果对象object具有名称为propertyName的属性，则返回true，否则返回false。
+  ```
+
+  ```javascript
+  var person = {
+    name: "Messi",
+    age: 29,
+    profession: "football player"
+  };
+  console.log(person.hasOwnProperty("name")); //true
+  console.log(person.hasOwnProperty("hasOwnProperty")); //false
+  console.log(Object.prototype.hasOwnProperty("hasOwnProperty")); //true
+  ```
+
+由以上代码可知，hasOwnProperty()并不存在于person对象中，但是person依然可以拥有此⽅法。所以person对象是如何找到Object对象中的⽅法的呢？靠的是原型链。
+
+原型链：
+
+原因是每个对象都有__proto__属性，此属性指向该对象的构造函数的原型。对象可以通过__proto__与上游的构造函数的原型对象连接起来，⽽上游的原型对象也有⼀个__proto__，这样就形成了原型链。
+
+#### 11、如何判断是否是数组？
+
+es6中加⼊了新的判断⽅法：
+
+  ```javascript
+  if(Array.isArray(value)) {
+    return true;
+  }
+  ```
+
+在考虑兼容性的情况下可以⽤toString的⽅法：
+
+  ```javascript
+  if(!Array.isArray){
+    Array.isArray = function(arg){
+      return Object.prototype.toString.call(arg)==='[object Array]'
+    }
+  }
+  ```
+
+#### 12、谈⼀谈你对this的了解？
+
+this的指向不是在编写时确定的，⽽是在执⾏时确定的，同时，this不同的指向在于遵循了⼀定的规则。⾸先，在非严格情况下，this是指向全局对象的，⽐如在浏览器就是指向window。
+
+  ```javascript
+  var name = "Bale";
+  function sayName () {
+    console.log(this.name);
+  };
+  sayName(); //"Bale"
+  ```
+
+其次，如果函数被调⽤的位置存在上下⽂对象时，那么函数是被隐式绑定的。
+
+  ```javascript
+  function f() {
+    console.log( this.name );
+  }
+  var obj = {
+    name: "Messi",
+    f: f
+  };
+  obj.f(); // 被调⽤的位置恰好被对象obj拥有，因此结果是Messi
+  ```
+
+再次，显示改变this指向，常⻅的⽅法就是call、apply、bind。以bind为例：
+
+  ```javascript
+  function f() {
+    console.log( this.name );
+  }
+  var obj = {
+    name: "Messi",
+  };
+  var obj1 = {
+    name: "Bale"
+  };
+  f.bind(obj)(); // Messi，由于bind将obj绑定到f函数上后返回⼀个新函数，因此需要再在后⾯加上括号进⾏执⾏，这是bind与apply和call的区别
+  ```
+
+最后，也是优先级最⾼的绑定new绑定。⽤new调⽤⼀个构造函数，会创建⼀个新对象，在创造这个新对象的过程中，新对象会⾃动绑定到Person对象的this上，那么this⾃然就指向这个新对象。
+
+  ```javascript
+  function Person(name) {
+    this.name = name;
+    console.log(name);
+  }
+  var person1 = new Person('Messi'); // Messi
+  ```
+
+绑定优先级：new绑定 > 显式绑定 > 隐式绑定 > 默认绑定
+
+那么箭头函数的this指向哪⾥？
+
+箭头函数不同于传统JavaScript中的函数，箭头函数并没有属于⾃⼰的this，它的所谓的this是捕获其所在上下⽂的this值，作为⾃⼰的this值，并且由于没有属于⾃⼰的this，⽽箭头函数是不会被new调⽤的，这个所谓的this也不会被改变。
+
+我们可以⽤Babel理解⼀下箭头函数：
+
+  ```javascript
+  // ES6
+  const obj = {
+    getArrow() {
+      return () => {
+        console.log(this === obj);
+      };
+    }
+  }
+  ```
+
+转换后：
+
+  ```javascript
+  // ES5，由Babel转译
+  var obj = {
+    getArrow: function getArrow() {
+      var _this = this;
+      return function () {
+        console.log(_this === obj);
+      };
+    }
+  };
+  ```
+
+#### 13、async/await是什么？
+
+async函数，就是Generator函数的语法糖，它建⽴在Promises上，并且与所有现有的基于Promise的API兼容。
+
+1. Async—声明⼀个异步函数(async function someName(){...})
+2. ⾃动将常规函数转换成Promise，返回值也是⼀个Promise对象
+3. 只有async函数内部的异步操作执⾏完，才会执⾏then⽅法指定的回调函数
+4. 异步函数内部可以使⽤await
+1. Await—暂停异步的功能执⾏(var result = await someAsyncCall();)
+2. 放置在Promise调⽤之前，await强制其他代码等待，直到Promise完成并返回结果
+3. 只能与Promise⼀起使⽤，不适⽤与回调
+4. 只能在async函数内部使⽤
+
+#### 14、async/await相⽐于Promise的优势？
+
+- 代码读起来更加同步，Promise虽然摆脱了回调地狱，但是then的链式调⽤也会带来额外的阅读负担
+- Promise传递中间值⾮常麻烦，⽽async/await⼏乎是同步的写法，⾮常优雅
+- 错误处理友好，async/await可以⽤成熟的try/catch，Promise的错误捕获⾮常冗余
+- 调试友好，Promise的调试很差，由于没有代码块，你不能在⼀个返回表达式的箭头函数中设置断点，如果你在⼀个.then代码块中使⽤调试器的步进(step-over)功能，调试器并不会进⼊后续的.then代码块，因为调试器只能跟踪同步代码的『每⼀步』。
+
+#### 15、简单介绍一下V8引擎的垃圾回收机制
+
+v8的垃圾回收机制基于分代回收机制，这个机制又基于世代假说，这个假说有两个特点，一是新生的对象容易早死，另一个是不死的对象会活得更久。基于这个假说v8引擎将内存分为了新生代和老生代。新创建的对象或者只经历过一次的垃圾回收的对象被称为新生代。经历过多次垃圾回收的对象被称为老生代。
+
+新生代被分为From和To两个空间，To一般是闲置的。当From空间满了的时候会执行Scavenge算法进行垃圾回收。当我们执行垃圾回收算法的时候应用逻辑将会停止，等垃圾回收结束后再继续执行。这个算法分为三步：
+
+1. 首先检查From空间的存活对象，如果对象存活则判断对象是否满足晋升到老生代的条件，如果满足条件则晋升到老生代。如果不满足条件则移动To空间。
+2. 如果对象不存活，则释放对象的空间。
+3. 最后将From空间和To空间角色进行交换。
+
+新生代对象晋升到老生代有两个条件：
+1. 第一个是判断是对象否已经经过一次Scavenge回收。若经历过，则将对象从From空间复制到老生代中；若没有经历，则复制到To空间。
+2. 第二个是To空间的内存使用占比是否超过限制。当对象从From空间复制到To空间时，若To空间使用超过25%，则对象直接晋升到老生代中。设置25%的原因主要是因为算法结束后，两个空间结束后会交换位置，如果To空间的内存太小，会影响后续的内存分配。
+
+老生代采用了标记清除法和标记压缩法。标记清除法首先会对内存中存活的对象进行标记，标记结束后清除掉那些没有标记的对象。由于标记清除后会造成很多的内存碎片，不便于后面的内存分配。所以了解决内存碎片的问题引入了标记压缩法。
+
+由于在进行垃圾回收的时候会暂停应用的逻辑，对于新生代方法由于内存小，每次停顿的时间不会太长，但对于老生代来说每次垃圾回收的时间长，停顿会造成很大的影响。为了解决这个问题V8引入了增量标记的方法，将一次停顿进行的过程分为了多步，每次执行完一小步就让运行逻辑执行一会，就这样交替运行。
+
+#### 16、哪些操作会造成内存泄漏？
+
+相关知识点：
+
+1. 意外的全局变量
+2. 被遗忘的计时器或回调函数
+3. 脱离 DOM 的引用
+4. 闭包
+
+回答：
+
+1. 第一种情况是我们由于使用未声明的变量，而意外的创建了一个全局变量，而使这个变量一直留在内存中无法被回收。
+2. 第二种情况是我们设置了setInterval定时器，而忘记取消它，如果循环函数有对外部变量的引用的话，那么这个变量会被一直留在内存中，而无法被回收。
+3. 第三种情况是我们获取一个DOM元素的引用，而后面这个元素被删除，由于我们一直保留了对这个元素的引用，所以它也无法被回收。
+4. 第四种情况是不合理的使用闭包，从而导致某些变量一直被留在内存当中。
+
+#### 17、如何实现深拷贝？
+
+  ```javascript
+  function cloneDeep(obj) {
+    const constructor = obj.constructor;
+    if (obj === null) return null;
+    if (typeof obj !== "object") return obj;
+    if (/^(RegExp|Date)$/i.test(constructor.name)) return new constructor(obj);
+    let clone = new constructor();
+    for (let key in obj) {
+      if (!obj.hasOwnProperty(key)) break;
+      clone[key] = cloneDeep(obj[key]);
+    }
+    return clone;
+  }
+  ```
+
+#### 18、手写AJAX？
+
+  ```javascript
+	var request = new XMLHttpRequest()
+	request.open('GET', '/a/b/c?name=ff', true);
+	request.onreadystatechange = function () {
+	if(request.readyState === 4 && request.status === 200) {
+	  console.log(request.responseText);
+	}};
+	request.send();
+  ```
+
+#### 19、移动端的点击事件的有延迟，时间是多久，为什么会有？怎么解决这个延时？
+
+移动端点击有300ms的延迟是因为移动端会有双击缩放的这个操作，因此浏览器在click之后要等待300ms，看用户有没有下一次点击，来判断这次操作是不是双击。
+
+有三种办法来解决这个问题：
+
+1. 通过meta标签禁用网页的缩放。
+2. 通过meta标签将网页的viewport设置为ideal viewport。
+3. 调用一些js库，比如FastClick。
+
+click延时问题还可能引起点击穿透的问题，就是如果我们在一个元素上注册了touchStart的监听事件，这个事件会将这个元素隐藏掉，我们发现当这个元素隐藏后， 触发了这个元素下的一个元素的点击事件，这就是点击穿透。
+
+
