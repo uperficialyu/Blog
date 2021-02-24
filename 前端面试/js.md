@@ -19,6 +19,8 @@
 17. 如何实现深拷贝
 18. 手写AJAX
 19. 移动端的点击事件的有延迟，时间是多久，为什么会有？怎么解决这个延时
+20. promise基础
+21. 跨域cors中如何传递cookie
 
 
 
@@ -33,7 +35,7 @@ MDN的解释：闭包是函数和声明该函数的词法环境的组合。
 1. 保护：保护自己的私有变量不受外界干扰（操作自己的私有变量和外界没有关系）
 2. 保存：如果当前上下文不被释放（只要让上下文的某个东西被外部占用即可），则存储的这些私有变量也不会被释放，可以供其下级上下文中调用，相当于把一些值保存起来了。
 
-我们把函数执行所带来的两大作用，称之为“闭包”（闭包不是任何的代码，而是函数运行的机制），市面上大多认为：只有上下文不背释放才是闭包，因为这样才保留下来了。
+我们把函数执行所带来的两大作用，称之为“闭包”（闭包不是任何的代码，而是函数运行的机制），市面上大多认为：只有上下文不被释放才是闭包，因为这样才保留下来了。
 
 #### 3、js有哪些数据类型？
 
@@ -392,4 +394,101 @@ v8的垃圾回收机制基于分代回收机制，这个机制又基于世代假
 
 click延时问题还可能引起点击穿透的问题，就是如果我们在一个元素上注册了touchStart的监听事件，这个事件会将这个元素隐藏掉，我们发现当这个元素隐藏后， 触发了这个元素下的一个元素的点击事件，这就是点击穿透。
 
+#### 20、promise基础？
 
+直接new Promise没有参数，报错
+
+  ```javascript
+  let p1 = new Promise();
+  // Uncaught TypeError: Promise resolver undefined is not a function
+  ```
+
+语法：
+
+  ```javascript
+  new Promise( function(resolve, reject) {...} /* executor */  );
+  ```
+
+参数：
+
+1. 在NEW PROMISE的同时就把executor函数执行了
+2. executor函数中有两个默认的形参：resolve/reject 函数
+3. executor函数中一般用来管理一个异步编程（当然只写同步的也可以）
+
+描述：
+
+1. 每一个PROMISE的实例都有两个重要的信息
+2. [[PromiseStatus]]：PROMISE状态（pending准备状态/resolved(fulfilled)成功状态/rejected失败状态）
+3. [[PromiseValue]]：PROMISE值（一般存放异步编程的处理结果）
+
+使用方法：
+
+  ```javascript
+  let p1 = new Promise((resolve, reject) => {
+    setTimeout(_ => {
+      // resolve(100);
+      // reject(200);
+    }, 1000);
+    // reject(100); //=>resolve/reject的执行是异步编程，需要等到THEN把方法存放好后，在根据状态通知THRN存放的某个方法执行
+  });
+
+  Promise.resolve(100) // 创建一个状态为成功值为100的PROMISE实例
+  Promise.reject(200) ...
+  Promise.all([promise1,promise2,...]) // 所有实例都成功，整体返回的PROMISE实例才是成功，只要有一个失败，整体实例就是失败的
+  Promise.race([promise1,promise2,...]) // 多个PROMISE实例同时进行，谁先处理完，以谁的状态作为最后的整体状态（不论是成功还是失败）
+  ```
+
+执行顺序：
+
+1. P1成功还是失败直接看EXECUTOR函数中执行的是哪个方法
+2. 每一次执行THEN会返回一个新的POMISE实例  P2
+3. 不管P1.THEN中哪个方法执行，只要执行不报错，则P2的状态就是成功，相反只要报错，P2就是失败，并且方法返回的结果就是P2的VALUE值
+4. 如果P1.THEN中某个方法的执行，返回的是一个新的PROMISE实例，则新实例的最后结果直接影响了P2的结果
+
+示例
+
+  ```javascript
+  let p2 = p1.then(result => {
+    // 当PROMISE实例状态为成功，执行THEN存放的第一个函数；RESULT是[[PromiseValue]]
+    return 10;
+  }, reason => {
+    // 当PROMISE实例状态为失败，执行THEN存放的第二个函数；
+    return Promise.resolve('OK');
+  });
+
+  let p3 = p2.then(result => {}, reason => {});
+  ```
+
+下面等价
+
+  ```javascript
+  p3.then(null,reason => {})
+  p3.catch(reason => {});
+  ```
+
+如果THEN中的某个方法没有写，则顺延至下一个TEHN的指定方法中
+
+  ```javascript
+  Promise.reject('NO').then(result => {
+    console.log('成功:' + result);
+    return 1;
+  }, /* reason => {
+    return Promise.reject(reason);
+  } */).then(/* result => {
+    return Promise.resolve(result);
+  },  */reason => {
+    console.log('失败:' + reason);
+  });
+
+  Promise.reject('NO').then(result => {
+    
+  }).catch(reason => {
+
+  }).then(result=>{
+
+  });
+  ```
+
+#### 21、跨域cors中如何传递cookie？
+
+浏览器默认情况下无法主动跨域向后端发送cookie，如果你要发送cookie给server的话, 就需要将withCredentials设置为true了。

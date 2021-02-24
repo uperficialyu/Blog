@@ -25,7 +25,7 @@ React的异步请求到底应该放在哪个⽣命周期⾥，有⼈认为在com
 
 ⽽且在componentWillMount请求会有⼀系列潜在的问题。⾸先，在服务器渲染时，如果在componentWillMount⾥获取数据，fetch data会执⾏两次，⼀次在服务端⼀次在客户端，这造成了多余的请求。其次，在React 16进⾏React Fiber重写后, componentWillMount可能在⼀次渲染中多次调⽤。
 
-⽬前官⽅推荐的异步请求是在componentDidmount中进⾏。如果有特殊需求需要提前请求，也可以在特殊情况下在constructor中请求。react 17之后 componentWillMount会被废弃，仅仅保留UNSAFE_componentWillMount。
+⽬前官⽅推荐的异步请求是在componentDidmount中进⾏。如果有特殊需求需要提前请求，也可以在特殊情况下在constructor中请求。react 17之后componentWillMount会被废弃，仅仅保留UNSAFE_componentWillMount。
 
 #### 2、jsx的本质是什么？
 
@@ -224,7 +224,7 @@ JS模拟虚拟DOM：
 
 - Store：保存数据的地⽅，你可以把它看成⼀个容器，整个应⽤只能有⼀个Store；
 - State：Store对象包含所有数据，如果想得到某个时点的数据，就要对Store⽣成快照，这种时点的数据集合，就叫State；
-- Action： State的变化， 会导致View的变化。但是，⽤户接触不到State，只能接触到View。所以，State的变化必须是View导致的。Action就是View发出的通知，表示State应该要发⽣变化了；
+- Action： State的变化，会导致View的变化。但是，⽤户接触不到State，只能接触到View。所以，State的变化必须是View导致的。Action就是View发出的通知，表示State应该要发⽣变化了；
 - Action Creator：View要发送多少种消息，就会有多少种Action。如果都⼿写，会很麻烦，所以我们定义⼀个函数来⽣成Action，这个函数就叫Action Creator；
 - Reducer：Store收到Action以后，必须给出⼀个新的State，这样View才会发⽣变化。这种State的计算过程就叫做Reducer。Reducer是⼀个函数，它接受Action和当前State作为参数，返回⼀个新的State；
 - dispatch：是View发出Action的唯⼀⽅法。
