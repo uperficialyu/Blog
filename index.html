@@ -38,19 +38,27 @@
   <div class="main"></div>
   <script>
 
-function sumBigNumber(a, b) {
-  var res = '',
-    temp = 0;
-  a = a.split('');
-  b = b.split('');
-  while (a.length || b.length || temp) {
-    temp += ~~a.pop() + ~~b.pop();
-    res = (temp % 10) + res;
-    temp = temp > 9;
-  }
-  return res.replace(/^0+/, '');
+var number = 5;
+var obj = {
+  number: 3,
+  fn1: (function() {
+    var number;
+    this.number *= 2;
+    number = number * 2;
+    number = 3;
+    return function() {
+      var num = this.number;
+      this.number *= 2;
+      console.log(num);
+      number *= 3;
+      console.log(number);
+    }
+  })()
 }
-console.log(sumBigNumber('111','222'))
+var fn1 = obj.fn1;
+fn1.call(null);
+obj.fn1();
+console.log(window.number);
 
 
 

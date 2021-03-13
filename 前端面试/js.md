@@ -21,6 +21,15 @@
 19. 移动端的点击事件的有延迟，时间是多久，为什么会有？怎么解决这个延时
 20. promise基础
 21. 跨域cors中如何传递cookie
+22. for of，for in和forEach，map的区别
+23. 如何判断一个变量是不是数组
+24. 类数组和数组的区别是什么
+25. ==和===有什么区别
+26. ES6中的class和ES5的类有什么区别
+27. 数组的哪些API会改变原数组
+28. 在JS中什么是变量提升？什么是暂时性死区
+29. 如何正确的判断this? 箭头函数的this是什么
+30. 谈谈你对JS执行上下文栈和作用域链的理解
 
 
 
@@ -57,6 +66,8 @@ js中的数据类型主要分为2种：
     - RegExp（正则）
     - Date（日期）
     - function（函数）
+
+复杂数据类型存储在堆内存，存储的是地址。当我们把对象赋值给另外一个变量的时候，复制的是地址，指向同一块内存空间，当其中一个对象改变时，另一个对象也会变化。
 
 #### 4、你有哪些方式检测数据类型？
 
@@ -174,7 +185,7 @@ null表示为空，代表此处不应该有值的存在，⼀个对象可以是n
 
 原型对象：
 
-绝⼤部分的函数(少数内建函数除外)都有⼀个prototype属性，这个属性是原型对象⽤来创建新对象实例，⽽所有被创建的对象都会共享原型对象，因此这些对象便可以访问原型对象的属性。例如 hasOwnProperty()⽅法存在于Obejct原型对象中，它便可以被任何对象当做⾃⼰的⽅法使⽤。
+绝⼤部分的函数(少数内建函数除外)都有⼀个prototype属性，这个属性是原型对象⽤来创建新对象实例，⽽所有被创建的对象都会共享原型对象，因此这些对象便可以访问原型对象的属性。例如hasOwnProperty()⽅法存在于Obejct原型对象中，它便可以被任何对象当做⾃⼰的⽅法使⽤。
 
   ```javascript
   ⽤法：object.hasOwnProperty(propertyName)
@@ -494,3 +505,165 @@ click延时问题还可能引起点击穿透的问题，就是如果我们在一
 #### 21、跨域cors中如何传递cookie？
 
 浏览器默认情况下无法主动跨域向后端发送cookie，如果你要发送cookie给server的话, 就需要将withCredentials设置为true了。
+
+#### 22、for of，for in和forEach，map的区别？
+
+1. for...of循环：具有iterator接口，就可以用for...of循环遍历它的成员(属性值)。for...of循环可以使用的范围包括数组、Set和Map结构、某些类似数组的对象、Generator对象，以及字符串。for...of循环调用遍历器接口，数组的遍历器接口只返回具有数字索引的属性。对于普通的对象，for...of结构不能直接使用，会报错，必须部署了Iterator接口后才能使用。可以中断循环。
+2. for...in循环：遍历对象自身的和继承的可枚举的属性, 不能直接获取属性值。可以中断循环。
+3. forEach: 只能遍历数组，不能中断，没有返回值(或认为返回值是undefined)，不修改原数组。
+4. map: 只能遍历数组，不能中断，返回值是修改后的数组，不修改原数组。
+
+#### 23、如何判断一个变量是不是数组？
+
+1. 使用Array.isArray判断，如果返回true，说明是数组
+2. 使用instanceof Array判断，如果返回true，说明是数组
+3. 使用Object.prototype.toString.call判断，如果值是 [object Array]，说明是数组
+4. 通过constructor来判断，如果是数组，那么arr.constructor===Array(不准确，因为我们可以指定obj.constructor=Array)
+
+  ```javascript
+  function fn() {
+    console.log(Array.isArray(arguments)) // false; 因为arguments是类数组，但不是数组
+    console.log(Array.isArray([1,2,3,4])); // true
+    console.log(arguments instanceof Array); // fasle
+    console.log([1,2,3,4] instanceof Array); // true
+    console.log(Object.prototype.toString.call(arguments)); // [object Arguments]
+    console.log(Object.prototype.toString.call([1,2,3,4])); // [object Array]
+    console.log(arguments.constructor === Array); // false
+    arguments.constructor = Array;
+    console.log(arguments.constructor === Array); // true
+    console.log(Array.isArray(arguments)); // false
+  }
+  ```
+
+#### 24、类数组和数组的区别是什么？
+
+1. 拥有length属性，其它属性（索引）为非负整数（对象中的索引会被当做字符串来处理）;
+2. 不具有数组所具有的方法；
+
+类数组是一个普通对象，而真实的数组是Array类型。
+
+常见的类数组有：函数的参数arugments，DOM对象列表(比如通过document.querySelectorAll得到的列表)，jQuery对象(比如$("div"))。
+
+类数组可以转换为数组：
+
+  ```javascript
+  //第一种方法
+  Array.prototype.slice.call(arrayLike);
+  //第二种方法
+  [...arrayLike];
+  //第三种方法:
+  Array.from(arrayLike);
+  ```
+
+任何定义了遍历器（Iterator）接口的对象，都可以用扩展运算符转为真正的数组。
+
+Array.from方法用于将两类对象转为真正的数组：类似数组的对象（array-like object）和可遍历（iterable）的对象。
+
+#### 25、==和===有什么区别？
+
+===不需要进行类型转换，只有类型相同并且值相等时，才返回true。
+
+==如果两者类型不同，首先需要进行类型转换。具体流程如下:
+
+1. 首先判断两者类型是否相同，如果相等，判断值是否相等
+2. 如果类型不同，进行类型转换
+3. 判断比较的是否是null或者是undefined，如果是, 返回true
+4. 判断两者类型是否为string和number，如果是，将字符串转换成number
+5. 判断其中一方是否为boolean，如果是，将boolean转为number再进行判断
+6. 判断其中一方是否为object且另一方为string、number或者symbol，如果是，将object转为原始类型再进行判断
+
+  ```javascript
+  let person1 = {
+    age:25
+  }
+  let person2 = person1;
+  person2.gae = 20;
+  console.log(person1 === person2); // true,注意复杂数据类型，比较的是引用地址
+  ```
+
+思考: []==![]
+
+我们来分析一下: []==![]是true还是false？
+
+1. 首先，我们需要知道!优先级是高于==(更多运算符优先级可查看：运算符优先级)
+2. ![]引用类型转换成布尔值都是true，因此![]的是false
+3. 根据上面的比较步骤中的第五条，其中一方是boolean，将boolean转为number再进行判断，false转换成number，对应的值是0
+4. 根据上面比较步骤中的第六条，有一方是 number，那么将object也转换成Number，空数组转换成数字，对应的值是0(空数组转换成数字，对应的值是0，如果数组中只有一个数字，那么转成number就是这个数字，其它情况，均为NaN)
+5. 0 == 0；为true
+
+#### 26、ES6中的class和ES5的类有什么区别？
+
+1. ES6 class内部所有定义的方法都是不可枚举的;
+2. ES6 class必须使用 new 调用;
+3. ES6 class不存在变量提升;
+4. ES6 class默认即是严格模式;
+5. ES6 class子类必须在父类的构造函数中调用super()，这样才有this对象；ES5中类继承的关系是相反的，先有子类的this，然后用父类的方法应用在this上。
+
+#### 27、数组的哪些API会改变原数组？
+
+修改原数组的API有：splice/reverse/fill/copyWithin/sort/push/pop/unshift/shift
+
+不修改原数组的API有：slice/map/forEach/every/filter/reduce/entry/entries/find
+
+#### 28、在JS中什么是变量提升？什么是暂时性死区？
+
+变量提升就是变量在声明之前就可以使用，值为undefined。
+
+在代码块内，使用 let/const 命令声明变量之前，该变量都是不可用的(会抛出错误)。这在语法上，称为“暂时性死区”。暂时性死区也意味着 typeof 不再是一个百分百安全的操作。
+
+  ```javascript
+  typeof x; // ReferenceError(暂时性死区，抛错)
+  let x;
+  typeof y; // 值是undefined，不会报错
+  ```
+
+暂时性死区的本质就是，只要一进入当前作用域，所要使用的变量就已经存在了，但是不可获取，只有等到声明变量的那一行代码出现，才可以获取和使用该变量。
+
+#### 29、如何正确的判断this? 箭头函数的this是什么？
+
+this的绑定规则有四种：默认绑定，隐式绑定，显式绑定，new绑定。
+
+1. 函数是否在new中调用(new绑定)，如果是，那么this绑定的是新创建的对象。
+2. 函数是否通过call,apply调用，或者使用了bind(即硬绑定)，如果是，那么this绑定的就是指定的对象。
+3. 函数是否在某个上下文对象中调用(隐式绑定)，如果是的话，this绑定的是那个上下文对象。一般是obj.foo()
+4. 如果以上都不是，那么使用默认绑定。如果在严格模式下，则绑定到undefined，否则绑定到全局对象。
+5. 如果把null或者undefined作为this的绑定对象传入call、apply或者bind, 这些值在调用时会被忽略，实际应用的是默认绑定规则。
+6. 箭头函数没有自己的this，它的this继承于上一层代码块的this。
+
+  ```javascript
+  var number = 5;
+  var obj = {
+    number: 3,
+    fn1: (function() {
+      var number;
+      this.number *= 2;
+      number = number * 2;
+      number = 3;
+      return function() {
+        var num = this.number;
+        this.number *= 2;
+        console.log(num);
+        number *= 3;
+        console.log(number);
+      }
+    })()
+  }
+  var fn1 = obj.fn1;
+  fn1.call(null);
+  obj.fn1();
+  console.log(window.number);
+  ```
+
+答案：10,9,3,27,20
+
+#### 30、谈谈你对JS执行上下文栈和作用域链的理解？
+
+执行上下文就是当前JavaScript代码被解析和执行时所在环境，JS执行上下文栈可以认为是一个存储函数调用的栈结构，遵循先进后出的原则。
+
+1. JavaScript执行在单线程上，所有的代码都是排队执行。
+2. 一开始浏览器执行全局的代码时，首先创建全局的执行上下文，压入执行栈的顶部。
+3. 每当进入一个函数的执行就会创建函数的执行上下文，并且把它压入执行栈的顶部。当前函数执行-完成后，当前函数的执行上下文出栈，并等待垃圾回收。
+4. 浏览器的JS执行引擎总是访问栈顶的执行上下文。
+5. 全局上下文只有唯一的一个，它在浏览器关闭时出栈。
+
+作用域链: 无论是 LHS 还是 RHS 查询，都会在当前的作用域开始查找，如果没有找到，就会向上级作用域继续查找目标标识符，每次上升一个作用域，一直到全局作用域为止。
