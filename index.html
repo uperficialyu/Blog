@@ -39,8 +39,21 @@
   <script>
 
 
-
-
+class A {
+  constructor() {
+    this.x = 1000;
+  }
+  //=>这样和构造函数中的this.xxx=xxx没啥区别，设置的是私有属性（ES7）
+  num = 100;
+  //=>设置到A.prototype上的方法
+  getX() {
+    console.log(this.x);
+  }
+  //=>把A当做普通对象设置的属性和方法
+  static n = 200;
+  static getN() { }
+}
+console.log(new A);
 
 
   </script>
