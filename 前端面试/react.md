@@ -12,7 +12,7 @@
 10. 什么是高阶组件
 11. 虚拟DOM是什么
 12. 讲下redux的⼯作流程
-13. react-redux是如何⼯作的
+13. react-redux是如何⼯作的 
 14. redux与mobx的区别
 15. redux中如何进⾏异步操作
 16. redux异步中间件之间的优劣
