@@ -38,24 +38,48 @@
   <div class="main"></div>
   <script>
 
-
-class A {
-  constructor() {
-    this.x = 1000;
+function sumBigNumber(a, b) {
+  var res = '',
+    temp = 0;
+  a = a.split('');
+  b = b.split('');
+  while (a.length || b.length || temp) {
+    temp += ~~a.pop() + ~~b.pop();
+    res = (temp % 10) + res;
+    temp = temp > 9;
   }
-  //=>这样和构造函数中的this.xxx=xxx没啥区别，设置的是私有属性（ES7）
-  num = 100;
-  //=>设置到A.prototype上的方法
-  getX() {
-    console.log(this.x);
-  }
-  //=>把A当做普通对象设置的属性和方法
-  static n = 200;
-  static getN() { }
+  return res.replace(/^0+/, '');
 }
-console.log(new A);
+
+const d = sumBigNumber('11111111112233333','22222222222222222222222222')
+console.log(d)
 
 
+let a = "9007199254740991";
+let b = "1234567899999999999";
+
+function add(a ,b){
+   //取两个数字的最大长度
+   let maxLength = Math.max(a.length, b.length);
+   //用0去补齐长度
+   a = a.padStart(maxLength , 0);//"0009007199254740991"
+   b = b.padStart(maxLength , 0);//"1234567899999999999"
+   //定义加法过程中需要用到的变量
+   let t = 0;
+   let f = 0;   //"进位"
+   let sum = "";
+   for(let i=maxLength-1 ; i>=0 ; i--){
+      t = parseInt(a[i]) + parseInt(b[i]) + f;
+      f = Math.floor(t/10);
+      sum = t%10 + sum;
+   }
+   if(f == 1){
+      sum = "1" + sum;
+   }
+   return sum;
+}
+
+console.log(add('11111111112233333' ,'22222222222222222222222222'))
   </script>
 </body>
 

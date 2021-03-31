@@ -1,17 +1,12 @@
-function A() {
-  this.x = 100;
+function sumBigNumber(a, b) {
+  var res = '',
+    temp = 0;
+  a = a.split('');
+  b = b.split('');
+  while (a.length || b.length || temp) {
+    temp += ~~a.pop() + ~~b.pop();
+    res = (temp % 10) + res;
+    temp = temp > 9;
+  }
+  return res.replace(/^0+/, '');
 }
-A.prototype.getX = function getX() {
-  console.log(this.x);
-};
-
-function B() {
-  //CALL继承
-  A.call(this);  //=>this.x = 100;  b.x=100;
-  this.y = 200;
-}
-B.prototype.getY = function getY() {
-  console.log(this.y);
-};
-let b = new B;
-console.log(b);
