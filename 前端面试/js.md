@@ -30,6 +30,7 @@
 28. 在JS中什么是变量提升？什么是暂时性死区
 29. 如何正确的判断this? 箭头函数的this是什么
 30. 谈谈你对JS执行上下文栈和作用域链的理解
+31. 数组去重的几种方式
 
 
 
@@ -667,3 +668,175 @@ this的绑定规则有四种：默认绑定，隐式绑定，显式绑定，new�
 5. 全局上下文只有唯一的一个，它在浏览器关闭时出栈。
 
 作用域链: 无论是 LHS 还是 RHS 查询，都会在当前的作用域开始查找，如果没有找到，就会向上级作用域继续查找目标标识符，每次上升一个作用域，一直到全局作用域为止。
+
+#### 31、数组去重的几种方式？
+
+1. 利用ES6 Set去重
+
+  ```javascript
+  function unique (arr) {
+    return Array.from(new Set(arr))
+  }
+  var arr = [1,1,'true','true',true,true,15,15,false,false, undefined,undefined, null,null, NaN, NaN,'NaN', 0, 0, 'a', 'a',{},{}];
+  console.log(unique(arr))
+   //[1, "true", true, 15, false, undefined, null, NaN, "NaN", 0, "a", {}, {}]
+  ```
+
+不考虑兼容性，这种去重的方法代码最少。这种方法还无法去掉“{}”空对象，后面的高阶方法会添加去掉重复“{}”的方法。
+
+2. 利用for嵌套for，然后splice去重
+
+  ```javascript
+  function unique(arr) {
+    for (var i = 0; i < arr.length; i++) {
+      for (var j = i + 1; j < arr.length; j++) {
+        if (arr[i] == arr[j]) {         //第一个等同于第二个，splice方法删除第二个
+          arr.splice(j, 1);
+          j--;
+        }
+      }
+    }
+    return arr;
+  }
+  var arr = [1, 1, 'true', 'true', true, true, 15, 15, false, false, undefined, undefined, null, null, NaN, NaN, 'NaN', 0, 0, 'a', 'a', {}, {}];
+  console.log(unique(arr))
+  //[1, "true", 15, false, undefined, NaN, NaN, "NaN", "a", {…}, {…}]     //NaN和{}没有去重，两个null直接消失了
+  ```
+
+双层循环，外层循环元素，内层循环时比较值。值相同时，则删去这个值。
+
+3. 利用indexOf去重
+
+  ```javascript
+  function unique(arr) {
+    if (!Array.isArray(arr)) {
+      console.log('type error!')
+      return
+    }
+    var array = [];
+    for (var i = 0; i < arr.length; i++) {
+      if (array.indexOf(arr[i]) === -1) {
+        array.push(arr[i])
+      }
+    }
+    return array;
+  }
+  var arr = [1, 1, 'true', 'true', true, true, 15, 15, false, false, undefined, undefined, null, null, NaN, NaN, 'NaN', 0, 0, 'a', 'a', {}, {}];
+  console.log(unique(arr))
+  // [1, "true", true, 15, false, undefined, null, NaN, NaN, "NaN", 0, "a", {…}, {…}]  //NaN、{}没有去重
+  ```
+
+新建一个空的结果数组，for 循环原数组，判断结果数组是否存在当前元素，如果有相同的值则跳过，不相同则push进数组。
+
+4. 利用sort()
+
+  ```javascript
+  function unique(arr) {
+    if (!Array.isArray(arr)) {
+      console.log('type error!')
+      return;
+    }
+    arr = arr.sort()
+    var arrry = [arr[0]];
+    for (var i = 1; i < arr.length; i++) {
+      if (arr[i] !== arr[i - 1]) {
+        arrry.push(arr[i]);
+      }
+    }
+    return arrry;
+  }
+  var arr = [1, 1, 'true', 'true', true, true, 15, 15, false, false, undefined, undefined, null, null, NaN, NaN, 'NaN', 0, 0, 'a', 'a', {}, {}];
+  console.log(unique(arr))
+  // [0, 1, 15, "NaN", NaN, NaN, {…}, {…}, "a", false, null, true, "true", undefined]      //NaN、{}没有去重
+  ```
+
+利用sort()排序方法，然后根据排序后的结果进行遍历及相邻元素比对。
+
+5. 利用hasOwnProperty
+
+  ```javascript
+  function unique(arr) {
+    var obj = {};
+    return arr.filter(function(item, index, arr){
+        return obj.hasOwnProperty(typeof item + item) ? false : (obj[typeof item + item] = true)
+    })
+  }
+  var arr = [1,1,'true','true',true,true,15,15,false,false, undefined,undefined, null,null, NaN, NaN,'NaN', 0, 0, 'a', 'a',{},{}];
+  console.log(unique(arr));
+  //[1, "true", true, 15, false, undefined, null, NaN, "NaN", 0, "a", {…}]   //所有的都去重了
+  ```
+
+利用hasOwnProperty 判断是否存在对象属性
+
+6. 利用filter
+
+  ```javascript
+  function unique(arr) {
+    return arr.filter(function (item, index, arr) {
+      //当前元素，在原始数组中的第一个索引==当前索引值，否则返回当前元素
+      return arr.indexOf(item, 0) === index;
+    });
+  }
+  var arr = [1, 1, 'true', 'true', true, true, 15, 15, false, false, undefined, undefined, null, null, NaN, NaN, 'NaN', 0, 0, 'a', 'a', {}, {}];
+  console.log(unique(arr))
+  //[1, "true", true, 15, false, undefined, null, "NaN", 0, "a", {…}, {…}]
+  ```
+
+7. 利用递归去重
+
+  ```javascript
+  function unique(arr) {
+    var array = arr;
+    var len = array.length;
+
+    array.sort(function (a, b) {   //排序后更加方便去重
+      return a - b;
+    })
+
+    function loop(index) {
+      if (index >= 1) {
+        if (array[index] === array[index - 1]) {
+          array.splice(index, 1);
+        }
+        loop(index - 1);    //递归loop，然后数组去重
+      }
+    }
+    loop(len - 1);
+    return array;
+  }
+  var arr = [1, 1, 'true', 'true', true, true, 15, 15, false, false, undefined, undefined, null, null, NaN, NaN, 'NaN', 0, 0, 'a', 'a', {}, {}];
+  console.log(unique(arr));
+  //[1, "a", "true", true, 15, false, 1, {…}, null, NaN, NaN, "NaN", 0, "a", {…}, undefined]
+  ```
+
+8. 利用Map数据结构去重
+
+  ```javascript
+  function arrayNonRepeatfy(arr) {
+    let map = new Map();
+    let array = new Array();  // 数组用于返回结果
+    for (let i = 0; i < arr.length; i++) {
+      if (map.has(arr[i])) {  // 如果有该key值
+        map.set(arr[i], true);
+      } else {
+        map.set(arr[i], false);   // 如果没有该key值
+        array.push(arr[i]);
+      }
+    }
+    return array;
+  }
+  var arr = [1, 1, 'true', 'true', true, true, 15, 15, false, false, undefined, undefined, null, null, NaN, NaN, 'NaN', 0, 0, 'a', 'a', {}, {}];
+  console.log(unique(arr));
+  //[1, "a", "true", true, 15, false, 1, {…}, null, NaN, NaN, "NaN", 0, "a", {…}, undefined]
+  ```
+
+9. 利用reduce+includes
+
+  ```javascript
+  function unique(arr) {
+    return arr.reduce((prev, cur) => prev.includes(cur) ? prev : [...prev, cur], []);
+  }
+  var arr = [1, 1, 'true', 'true', true, true, 15, 15, false, false, undefined, undefined, null, null, NaN, NaN, 'NaN', 0, 0, 'a', 'a', {}, {}];
+  console.log(unique(arr));
+  // [1, "true", true, 15, false, undefined, null, NaN, "NaN", 0, "a", {…}, {…}]
+  ```
