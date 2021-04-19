@@ -1,27 +1,33 @@
-let arr = [
-  [1, 2, 2],
-  [3, 4, 5, 5],
-  [6, 7, 8, 9, [11, 12, [12, 13, [14]]]], 10
-];
-~ function () {
-  function myFlat() {
-    let result = [],
-      _this = this;
-    //=>循环ARR中的每一项，把不是数组的存储到新数组中
-    let fn = (arr) => {
-      for (let i = 0; i < arr.length; i++) {
-        let item = arr[i];
-        if (Array.isArray(item)) {
-          fn(item);
-          continue;
-        }
-        result.push(item);
+function createArr(n, len) {
+  let arr = new Array(len).fill(null),
+    temp = [];
+  arr[0] = n;
+  arr = arr.map((item, index) => {
+    if (item === null) {
+      item = temp[index - 1] + 1;
+    }
+    temp.push(item);
+    return item;
+  });
+  return arr;
+}
+function fn(count) {
+  let result = [];
+  //=>求出中间值
+  let middle = Math.ceil(count / 2);
+  //从1开始累加
+  for (let i = 1; i <= middle; i++) {
+    //控制累加多少次
+    for (let j = 2; ; j++) {
+      //求出累加多次的和
+      let total = (i + (i + j - 1)) * (j / 2);
+      if (total > count) {
+        break;
+      } else if (total === count) {
+        result.push(createArr(i, j));
+        break;
       }
-    };
-    fn(_this);
-    return result;
+    }
   }
-  Array.prototype.myFlat = myFlat;
-}();
-let arr1 = arr.myFlat();
-console.log(arr1);
+  return result;
+}
