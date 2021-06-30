@@ -25,7 +25,7 @@ JavaScript语言的设计者意识到，这时主线程完全可以不管IO设�
       console.log(2);
     }
   }
-  console.timeEnd('AAA'); //=>time/timeEnd可以记录一段程序执行的时间（时间受电脑性能和执行时候的环境转态影响） "事后统计法"   300MS~400MS
+  console.timeEnd('AAA'); // =>time/timeEnd可以记录一段程序执行的时间（时间受电脑性能和执行时候的环境转态影响） "事后统计法"   300MS~400MS
   console.log(3);
   ```
 
