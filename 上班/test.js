@@ -1,0 +1,143 @@
+const a = {
+  agentPerson: "",
+  agentPersonIdCard: "",
+  agentPersonIdCardFront: "",
+  agentPersonIdCardReverse: "",
+  agentPersonPhone: "",
+  businessLicense: "",
+  email: "",
+  expandInfo: {
+    requestId: "",
+    trademarkName: "",
+    trademarkPicPath: "",
+    requestId: "",
+    baseInfos: [
+      {
+        address: "",
+        area: "",
+        location: "",
+        requestId: "",
+      },
+    ],
+    entrustedProcessingCompany: {
+      address: "",
+      id: "",
+    },
+    goodsCirculation: {
+      incomingAndOutgoingLedger: "",
+      jdTotalPrice: "",
+      requestId: "",
+      tbTotalPrice: "",
+      tmallTotalPrice: "",
+      goodsOrigins: [
+        {
+          origin: "",
+          requestId: "",
+          salesInfo: {
+            requestId: "",
+            totalPrice: "",
+            totalValue: "",
+          },
+        },
+      ],
+      offlineStoreInfo: {
+        count: "",
+        requestId: "",
+        salesInfo: {
+          requestId: "",
+          totalPrice: "",
+          totalValue: "",
+        },
+      },
+      onlineStoreInfo: {
+        count: "",
+        requestId: "",
+        salesInfo: {
+          requestId: "",
+          totalPrice: "",
+          totalValue: "",
+        },
+      },
+      productionAndMarketing: {
+        requestId: "",
+        totalPrice: "",
+        totalValue: "",
+      },
+      recordCertificateOfTeaOrigin: {
+        code: "",
+        filePath: "",
+        requestId: "",
+        type: "",
+      },
+      specificationInfo: [
+        {
+          picPath: "",
+          requestId: "",
+          specification: "",
+          style: "",
+        },
+      ],
+    },
+    processingPlants: [
+      {
+        address: "",
+        id: new Date().getTime(),
+        location: "",
+        name: "",
+        requestId: "",
+        type: "",
+        licenses: {
+          code: "",
+          filePath: "",
+          requestId: "",
+          type: "",
+        },
+      },
+    ],
+    subpackage: {
+      address: "",
+      id: "",
+      location: "",
+      name: "",
+      requestId: "",
+      type: "",
+      licenses: {
+        code: "",
+        filePath: "",
+        requestId: "",
+        type: "",
+      },
+    },
+    upstreamCompaniesForPackagingProducts: {
+      address: "",
+      id: "",
+      location: "",
+      name: "",
+      requestId: "",
+      type: "",
+      licenses: {
+        code: "",
+        filePath: "",
+        requestId: "",
+        type: "",
+      },
+    },
+  },
+  fullLocation: "",
+  legalPerson: "",
+  legalPersonIdCard: "",
+  legalPersonIdCardFront: "",
+  legalPersonIdCardReverse: "",
+  legalPersonPhone: "",
+  location: "",
+  orgCreditCode: "",
+  orgName: "",
+  requestId: "",
+  trademarkInfo: [
+    {
+      requestId: "",
+      trademarkName: "",
+      trademarkPicPath: "",
+    },
+  ],
+}
