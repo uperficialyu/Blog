@@ -5,81 +5,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-
   <style>
-    /* 原理1: 层叠上下文 - html层叠上下文元素里面
-  特性:  层叠顺序 =>  
-  背景或边框 <  z-index负值 < 块级元素  < 浮动元素 < 行内块 <  position < z-index正值
-  aside浮动元素
-  main块级元素
-
-  原理2: BFC规则
-  BFC元素不会与float容器重叠
-  BFC是一个独立的容器   和外面的元素互不影响
-*/
-    .aside {
-      width: 100px;
-      height: 150px;
-      float: left;
-      background: #f66;
-    }
-
-    .main {
-      height: 200px;
-      background: #fcc;
-      overflow: hidden;
-    }
   </style>
 </head>
 
 <body>
-
-  <div class="aside"></div>
-  <div class="main"></div>
   <script>
-
-function sumBigNumber(a, b) {
-  var res = '',
-    temp = 0;
-  a = a.split('');
-  b = b.split('');
-  while (a.length || b.length || temp) {
-    temp += ~~a.pop() + ~~b.pop();
-    res = (temp % 10) + res;
-    temp = temp > 9;
+// 定义一个动物类
+function Animal (name) {
+  // 属性
+  this.name = name || 'Animal';
+  // 实例方法
+  this.sleep = function(){
+    console.log(this.name + '正在睡觉！');
   }
-  return res.replace(/^0+/, '');
 }
+// 原型方法
+Animal.prototype.eat = function(food) {
+  console.log(this.name + '正在吃：' + food);
+};
 
-const d = sumBigNumber('11111111112233333','22222222222222222222222222')
-console.log(d)
-
-
-let a = "9007199254740991";
-let b = "1234567899999999999";
-
-function add(a ,b){
-   //取两个数字的最大长度
-   let maxLength = Math.max(a.length, b.length);
-   //用0去补齐长度
-   a = a.padStart(maxLength , 0);//"0009007199254740991"
-   b = b.padStart(maxLength , 0);//"1234567899999999999"
-   //定义加法过程中需要用到的变量
-   let t = 0;
-   let f = 0;   //"进位"
-   let sum = "";
-   for(let i=maxLength-1 ; i>=0 ; i--){
-      t = parseInt(a[i]) + parseInt(b[i]) + f;
-      f = Math.floor(t/10);
-      sum = t%10 + sum;
-   }
-   if(f == 1){
-      sum = "1" + sum;
-   }
-   return sum;
+function Cat(name){
+  Animal.call(this);
+  this.name = name || 'Tom';
 }
+//　Test Code
+var cat = new Cat();
+console.log(cat.name); // cat
+console.log(cat.eat('fish')); // cat正在吃：fish  undefined
+console.log(cat.sleep()); // cat正在睡觉！ undefined
+console.log(cat instanceof Animal); // true 
+console.log(cat instanceof Cat); // true
 
-console.log(add('11111111112233333' ,'22222222222222222222222222'))
   </script>
 </body>
 
