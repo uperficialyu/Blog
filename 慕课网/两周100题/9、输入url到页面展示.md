@@ -24,7 +24,7 @@
 获取了 html 之后，解析过程中还可能会继续加载其他资源：js css 图片等。<br>
 静态资源可能会有强缓存，加载时要判断。
 
-![](./img/cache-control.png)
+![](./img/14cache-control.png)
 
 ## 解析
 
@@ -35,7 +35,7 @@
 - css 构建 CSSOM（即 style tree）
 - 两者结合形成 Render tree （包括尺寸、定位等）
 
-![](./img/render.png)
+![](./img/15render.png)
 
 css 包括：
 - 内嵌 css `<style>`
