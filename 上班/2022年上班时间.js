@@ -69,6 +69,42 @@ const arr4 = [
   {date: '2022-04-28', startTime: '07:36', endtime: '22.07', week: '周四' },
 ]
 
+const arr5 = [
+  {date: '2022-05-05', startTime: '08:51', endtime: '19.08', week: '周四' },
+  {date: '2022-05-06', startTime: '08:45', endtime: '19.31', week: '周五' },
+  {date: '2022-05-07', startTime: '08:49', endtime: '20.33', week: '周六假期加班' },
+  {date: '2022-05-09', startTime: '13:21', endtime: '19.14', week: '周一' },
+  {date: '2022-05-10', startTime: '12:38', endtime: '19.01', week: '周二' },
+  {date: '2022-05-11', startTime: '08:33', endtime: '22.00', week: '周三' },
+  {date: '2022-05-12', startTime: '09:43', endtime: '20.57', week: '周四' },
+  {date: '2022-05-13', startTime: '13:13', endtime: '19.31', week: '周五' },
+  {date: '2022-05-16', startTime: '08:55', endtime: '22.01', week: '周一' },
+  {date: '2022-05-17', startTime: '09:49', endtime: '00.03', week: '周二' },
+  {date: '2022-05-18', startTime: '13:16', endtime: '18.16', week: '周三' },
+  {date: '2022-05-19', startTime: '08:55', endtime: '18.12', week: '周四' },
+  {date: '2022-05-20', startTime: '08:59', endtime: '21.46', week: '周五' },
+  {date: '2022-05-23', startTime: '08:52', endtime: '20.31', week: '周一' },
+  {date: '2022-05-24', startTime: '08:58', endtime: '22.05', week: '周二' },
+  {date: '2022-05-25', startTime: '09:38', endtime: '18.22', week: '周三' },
+  {date: '2022-05-26', startTime: '08:40', endtime: '22.17', week: '周四' },
+  {date: '2022-05-27', startTime: '09:38', endtime: '20.00', week: '周五' },
+  {date: '2022-05-29', startTime: '16:54', endtime: '21.18', week: '周日假期加班' },
+  {date: '2022-05-30', startTime: '08:51', endtime: '22.02', week: '周一' },
+  {date: '2022-05-31', startTime: '09:42', endtime: '20.03', week: '周二' },
+]
+
+const arr6 = [
+  {date: '2022-06-01', startTime: '01:00', endtime: '18.32', week: '周三' },
+  {date: '2022-06-02', startTime: '08:24', endtime: '21.58', week: '周四' },
+  {date: '2022-06-06', startTime: '08:31', endtime: '22.02', week: '周一' },
+  {date: '2022-06-07', startTime: '09:36', endtime: '20.09', week: '周二' },
+  {date: '2022-06-08', startTime: '08:42', endtime: '22.05', week: '周三' },
+  {date: '2022-06-09', startTime: '09:37', endtime: '20.28', week: '周四' },
+  {date: '2022-06-10', startTime: '08:45', endtime: '18.09', week: '周五' },
+  {date: '2022-06-11', startTime: '15:39', endtime: '21.51', week: '周六假期加班' },
+  {date: '2022-06-12', startTime: '10:31', endtime: '', week: '周日假期加班' },
+]
+
 function workOvertime(arr) {
   let sum = 0;
   let sum1 = 0;
