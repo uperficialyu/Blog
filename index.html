@@ -9,8 +9,8 @@
 </head>
 
 <body>
-  <img src="https://opinion-oss.jgwcjm.com/95687719b2046f4f465532d9f60ee0ec&81334ba73a9300b3e359942c95154179" alt="">
-  <img src="https://opinion-oss.jgwcjm.com/4a08df2b7604c0e06f31ccc506c3e723" alt="">
+  <!-- <img src="https://opinion-oss.jgwcjm.com/95687719b2046f4f465532d9f60ee0ec&81334ba73a9300b3e359942c95154179" alt="">
+  <img src="https://opinion-oss.jgwcjm.com/4a08df2b7604c0e06f31ccc506c3e723" alt=""> -->
   <script>
     var radius = 180;//3D 球的半径
     var dtr = Math.PI / 180;
@@ -178,16 +178,16 @@
       cc = Math.cos(c * dtr);
     }
 
+    const list = [{"reqId":null,"seqNo":null,"key":"安吉白茶","count":"1850","except":false},{"reqId":null,"seqNo":null,"key":"茶叶","count":"1685","except":false},{"reqId":null,"seqNo":null,"key":"img","count":"1357","except":false},{"reqId":null,"seqNo":null,"key":"绿茶","count":"1334","except":false},{"reqId":null,"seqNo":null,"key":"白茶","count":"1155","except":false},{"reqId":null,"seqNo":null,"key":"红茶","count":"933","except":false},{"reqId":null,"seqNo":null,"key":"中国","count":"908","except":false},{"reqId":null,"seqNo":null,"key":"茶树","count":"904","except":false},{"reqId":null,"seqNo":null,"key":"品种","count":"856","except":false},{"reqId":null,"seqNo":null,"key":"工艺","count":"833","except":false},{"reqId":null,"seqNo":null,"key":"加工","count":"816","except":false},{"reqId":null,"seqNo":null,"key":"浙江","count":"701","except":false},{"reqId":null,"seqNo":null,"key":"一个","count":"687","except":false},{"reqId":null,"seqNo":null,"key":"采摘","count":"685","except":false},{"reqId":null,"seqNo":null,"key":"发酵","count":"651","except":false},{"reqId":null,"seqNo":null,"key":"比较","count":"644","except":false},{"reqId":null,"seqNo":null,"key":"制作","count":"640","except":false},{"reqId":null,"seqNo":null,"key":"品质","count":"599","except":false},{"reqId":null,"seqNo":null,"key":"香气","count":"596","except":false},{"reqId":null,"seqNo":null,"key":"云南","count":"588","except":false},{"reqId":null,"seqNo":null,"key":"口感","count":"577","except":false},{"reqId":null,"seqNo":null,"key":"普洱茶","count":"570","except":false},{"reqId":null,"seqNo":null,"key":"价格","count":"568","except":false},{"reqId":null,"seqNo":null,"key":"乌龙茶","count":"566","except":false},{"reqId":null,"seqNo":null,"key":"没有","count":"565","except":false},{"reqId":null,"seqNo":null,"key":"茶汤","count":"547","except":false},{"reqId":null,"seqNo":null,"key":"黄茶","count":"539","except":false},{"reqId":null,"seqNo":null,"key":"市场","count":"530","except":false},{"reqId":null,"seqNo":null,"key":"品牌","count":"522","except":false},{"reqId":null,"seqNo":null,"key":"西湖龙井","count":"517","except":false},{"reqId":null,"seqNo":null,"key":"龙井","count":"516","except":false},{"reqId":null,"seqNo":null,"key":"滋味","count":"511","except":false},{"reqId":null,"seqNo":null,"key":"喝茶","count":"510","except":false},{"reqId":null,"seqNo":null,"key":"茶园","count":"501","except":false},{"reqId":null,"seqNo":null,"key":"福建","count":"496","except":false},{"reqId":null,"seqNo":null,"key":"产业","count":"486","except":false},{"reqId":null,"seqNo":null,"key":"主要","count":"445","except":false},{"reqId":null,"seqNo":null,"key":"属于","count":"433","except":false},{"reqId":null,"seqNo":null,"key":"产地","count":"412","except":false},{"reqId":null,"seqNo":null,"key":"铁观音","count":"408","except":false}]
+    console.log(list,'sss')
     $(document).ready(function () {
       var i = 0;
       var oTag = null;
-      $.getJSON("./index.json", function (data) {
-        console.log("这里getjson");
-        var items = [];
-        $.each(data, function (key, val) {
-          items.push("<a href=#  style=font-size:" + val + "px>" + key + "</a>");
-        });
-        $("<div/>", {
+      var items = []
+      list.forEach((item, index) => {
+        items.push("<a href=#  style=font-size:" + 15 + "px>" + item.key + "</a>");
+      })
+      $("<div/>", {
           "id": "div1",
           style: "border:solid 2px black",
           ALIGN: "center",
@@ -228,7 +228,57 @@
         };
 
         setInterval(update, 30);
-      });
+
+
+      // $.getJSON("./index.json", function (data) {
+      //   console.log("这里getjson", data);
+      //   var items = [];
+      //   $.each(data, function (key, val) {
+      //   console.log("这里getjson", key, val);
+      //     items.push("<a href=#  style=font-size:" + val + "px>" + key + "</a>");
+      //   });
+      //   $("<div/>", {
+      //     "id": "div1",
+      //     style: "border:solid 2px black",
+      //     ALIGN: "center",
+      //     html: items.join("")
+      //   }).appendTo("body");
+      //   //console.log($('div'));
+
+      //   oDiv = document.getElementById('div1');
+      //   aA = oDiv.getElementsByTagName('a');
+
+      //   for (i = 0; i < aA.length; i++) {
+      //     oTag = {};
+      //     oTag.offsetWidth = aA[i].offsetWidth;
+      //     oTag.offsetHeight = aA[i].offsetHeight;
+      //     mcList.push(oTag);
+      //   }
+
+      //   sineCosine(0, 0, 0);
+
+      //   positionAll();
+
+      //   oDiv.onmouseover = function () {
+      //     active = true;
+      //   };
+
+      //   oDiv.onmouseout = function () {
+      //     active = false;
+      //   };
+
+      //   oDiv.onmousemove = function (ev) {
+      //     var oEvent = window.event || ev;
+
+      //     mouseX = oEvent.clientX - (oDiv.offsetLeft + oDiv.offsetWidth / 2);
+      //     mouseY = oEvent.clientY - (oDiv.offsetTop + oDiv.offsetHeight / 2);
+
+      //     mouseX /= 5;
+      //     mouseY /= 5;
+      //   };
+
+      //   setInterval(update, 30);
+      // });
     });
   </script>
 
