@@ -107,6 +107,16 @@ const arr6 = [
   {date: '2022-06-14', startTime: '09:47', endtime: '18.08', week: '周二' },
   {date: '2022-06-15', startTime: '08:43', endtime: '22.01', week: '周三' },
   {date: '2022-06-16', startTime: '09:37', endtime: '22.01', week: '周四' },
+  {date: '2022-06-17', startTime: '13:11', endtime: '19.42', week: '周五' },
+  {date: '2022-06-19', startTime: '10:38', endtime: '23.06', week: '周日假期加班' },
+  {date: '2022-06-20', startTime: '09:23', endtime: '00.02', week: '周一' },
+  {date: '2022-06-21', startTime: '09:35', endtime: '22.38', week: '周二' },
+  {date: '2022-06-22', startTime: '13:08', endtime: '18.33', week: '周三' },
+  {date: '2022-06-23', startTime: '08:40', endtime: '19.21', week: '周四' },
+  {date: '2022-06-24', startTime: '08:39', endtime: '21.38', week: '周五' },
+  {date: '2022-06-26', startTime: '07:36', endtime: '20.43', week: '周日假期加班' },
+  {date: '2022-06-27', startTime: '08:40', endtime: '22.01', week: '周一' },
+  {date: '2022-06-28', startTime: '09:33', endtime: '22.02', week: '周二' },
 ]
 
 function workOvertime(arr) {
