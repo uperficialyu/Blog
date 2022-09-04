@@ -145,6 +145,36 @@ const arr7 = [
   {date: '2022-07-28', startTime: '09:38', endtime: '凌晨03.22', week: '周四' },
 ]
 
+const arr8 = [
+  {date: '2022-08-01', startTime: '07:07', endtime: '20.38', week: '周一' },
+  {date: '2022-08-02', startTime: '07:23', endtime: '19.00', week: '周二' },
+  {date: '2022-08-03', startTime: '06:59', endtime: '22.19', week: '周三' },
+  {date: '2022-08-04', startTime: '08:57', endtime: '23.24', week: '周四' },
+  {date: '2022-08-05', startTime: '07:20', endtime: '19.04', week: '周五' },
+  {date: '2022-08-08', startTime: '07:04', endtime: '19.13', week: '周一' },
+  {date: '2022-08-09', startTime: '07:19', endtime: '18.26', week: '周二' },
+  {date: '2022-08-10', startTime: '07:23', endtime: '20.14', week: '周三' },
+  {date: '2022-08-11', startTime: '07:32', endtime: '22.07', week: '周四' },
+  {date: '2022-08-15', startTime: '06:59', endtime: '21.30', week: '周一' },
+  {date: '2022-08-16', startTime: '08:13', endtime: '21.32', week: '周二' },
+  {date: '2022-08-17', startTime: '07:24', endtime: '21.34', week: '周三' },
+  {date: '2022-08-18', startTime: '07:40', endtime: '21.37', week: '周四' },
+  {date: '2022-08-19', startTime: '08:02', endtime: '22.56', week: '周五' },
+  {date: '2022-08-22', startTime: '07:37', endtime: '19.03', week: '周一' },
+  {date: '2022-08-23', startTime: '07:01', endtime: '19.19', week: '周二' },
+  {date: '2022-08-24', startTime: '07:38', endtime: '19.02', week: '周三' },
+  {date: '2022-08-25', startTime: '08:21', endtime: '19.28', week: '周四' },
+  {date: '2022-08-26', startTime: '08:19', endtime: '22.40', week: '周五' },
+  {date: '2022-08-29', startTime: '07:33', endtime: '19.01', week: '周一' },
+  {date: '2022-08-30', startTime: '08:23', endtime: '19.36', week: '周二' },
+  {date: '2022-08-31', startTime: '07:21', endtime: '凌晨00.04', week: '周三' },
+]
+
+const arr9 = [
+  {date: '2022-09-01', startTime: '03:30', endtime: '18.06', week: '周四' },
+  {date: '2022-09-02', startTime: '08:15', endtime: '22.43', week: '周五' },
+] 
+
 function workOvertime(arr) {
   let sum = 0;
   let sum1 = 0;
