@@ -173,6 +173,14 @@ const arr8 = [
 const arr9 = [
   {date: '2022-09-01', startTime: '03:30', endtime: '18.06', week: '周四' },
   {date: '2022-09-02', startTime: '08:15', endtime: '22.43', week: '周五' },
+  {date: '2022-09-04', startTime: '08:46', endtime: '17.13', week: '周日假期加班' },
+  {date: '2022-09-06', startTime: '08:38', endtime: '凌晨00.01', week: '周二' },
+  {date: '2022-09-07', startTime: '07:26', endtime: '21.30', week: '周三' },
+  {date: '2022-09-08', startTime: '08:34', endtime: '凌晨01.02', week: '周四' },
+  {date: '2022-09-09', startTime: '04:27', endtime: '23.11', week: '周五' },
+  {date: '2022-09-12', startTime: '08:31', endtime: '23.32', week: '周一中秋假期加班' },
+  {date: '2022-09-13', startTime: '06:51', endtime: '凌晨00.16', week: '周二' },
+
 ] 
 
 function workOvertime(arr) {
