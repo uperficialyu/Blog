@@ -180,6 +180,9 @@ const arr9 = [
   {date: '2022-09-09', startTime: '04:27', endtime: '23.11', week: '周五' },
   {date: '2022-09-12', startTime: '08:31', endtime: '23.32', week: '周一中秋假期加班' },
   {date: '2022-09-13', startTime: '06:51', endtime: '凌晨00.16', week: '周二' },
+  {date: '2022-09-14', startTime: '07:41', endtime: '22.00', week: '周三' },
+  {date: '2022-09-15', startTime: '09:46', endtime: '22.01', week: '周四' },
+  {date: '2022-09-16', startTime: '09:15', endtime: '23.46', week: '周五' },
 
 ] 
 
